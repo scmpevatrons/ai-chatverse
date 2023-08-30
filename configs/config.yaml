@@ -20,7 +20,9 @@ Models:
     LLMModelClass: LLAMA2
     SupportsStream: true
     Icon: llama2.png
-    Description: Llama 2, a large language model, is a product of an uncommon alliance between Meta and Microsoft, two competing tech giants at the forefront of artificial intelligence research.
+    Description: |
+      Llama 2, a large language model, is a product of an uncommon alliance between Meta and Microsoft, two competing tech giants at the forefront of artificial intelligence research.
+      Note: This will only work if you have chat llama2 files locally and you are running locally., if necessary install llama2.cpp with based on your hardware to use GPU etc.
     SystemMessage: You are a helpful assistant that responds in Markdown format.
     MemoryArguments:
       k: 5

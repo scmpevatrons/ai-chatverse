@@ -21,6 +21,7 @@ jsonschema==4.19.0
 jsonschema-specifications==2023.7.1
 langchain==0.0.274
 langsmith==0.0.27
+llama-cpp-python==0.1.77
 markdown-it-py==3.0.0
 MarkupSafe==2.1.3
 marshmallow==3.20.1
@@ -29,6 +30,7 @@ multidict==6.0.4
 mypy-extensions==1.0.0
 numpy==1.25.2
 numexpr==2.8.5
+openai==0.27.8
 packaging==23.1
 pandas==2.0.3
 Pillow==9.5.0

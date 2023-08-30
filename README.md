@@ -22,6 +22,10 @@ What sets AI Chatverse apart is its feature: the ability to dynamically craft a 
 ## Quickstart
 The best way to get started with the application is by visiting the application hosted in streamlit community cloud <a href="https://ai-chatverse.streamlit.app/" target="_blank"> here</a>.
 
+**Note:** LLAMA2 uses llama cpp and needs a aritifact, it can only be run locally.
+
+PS: Please configure the installation according to this <a href="https://python.langchain.com/docs/integrations/llms/llamacpp" target="_blank"> link </a>
+
 ### Running from docker locally via official docker image
 The application can be run locally using docker by running the following command
 
