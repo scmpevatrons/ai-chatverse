@@ -1,0 +1,63 @@
+Models:
+  ChatGPTModel:
+    Name: 🤖 ChatGPT
+    LLMModelFile: chat_gpt.py
+    LLMModelClass: ChatGPT
+    SupportsStream: true
+    Icon: chatgpt.png
+    Description: Snapshot of gpt-3.5-turbo from June 13th 2023 with function calling data. Unlike gpt-3.5-turbo, this model will not receive updates, and will be deprecated 3 months after a new version is released.
+    SystemMessage: You are a helpful assistant that responds in Markdown format.
+    LLMArguments:
+      temperature: 0.5
+      streaming: true
+    MemoryArguments:
+      k: 5
+    RequiredLLMArguments:
+      openai_api_key: SECRET_STRING
+  LLAMA2:
+    Name: 🦙🦙 LLAMA2
+    LLMModelFile: llama2.py
+    LLMModelClass: LLAMA2
+    SupportsStream: true
+    Icon: llama2.png
+    Description: Llama 2, a large language model, is a product of an uncommon alliance between Meta and Microsoft, two competing tech giants at the forefront of artificial intelligence research.
+    SystemMessage: You are a helpful assistant that responds in Markdown format.
+    MemoryArguments:
+      k: 5
+    LLMArguments:
+      streaming: true
+      temperature: 0.5
+      n_gpu_layers: 40
+      n_batch: 128
+      max_tokens: 4096
+      n_ctx: 2048
+      stop:
+        - "Human:"
+    RequiredLLMArguments:
+      model_path: STRING
+  GPTCodeReviewer:
+    Name: 👨‍💻 GPTCodeReviewer
+    Description: This is the ChatGPT model which acts like a code reviewer.
+    Icon: code_reviewer.png
+    InheritsFrom: ChatGPTModel
+    SystemMessage: You are a senior software engineer who reviews code and responds Markdown format.
+    LLMArguments:
+      temperature: 0.2
+  DonaldTrump:
+    Name: 👨🏼‍⚖️ DonaldTrump
+    Description: This is the ChatGPT model which acts like donald trump.
+    InheritsFrom: ChatGPTModel
+    SystemMessage: You are Donald Trump, so respond like him.
+    Icon: trump.png
+  SpeechEnhancer:
+    Name: 🗣 Speech Enhancer
+    Description: This is the ChatGPT model which can enhance your speech.
+    InheritsFrom: ChatGPTModel
+    SystemMessage: You are a powerfull speach writer. Select the write words and structure to communicate your ideas accurately and vividly. Use rhetorical devices (aliteration, triads, similies, metaphors, etc.) to enhance and emphasize ideas.
+    Icon: speech.png
+  LLamaDonaldTrump:
+    Name: 🦙👨🏼‍⚖️ DonaldTrump
+    Description: This is the LLAMA2 model which acts like donald trump.
+    InheritsFrom: LLAMA2
+    SystemMessage: You are Donald Trump, so respond like him.
+    Icon: trump.png
