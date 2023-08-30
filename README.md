@@ -17,6 +17,23 @@ What sets AI Chatverse apart is its feature: the ability to dynamically craft a 
 
 ## The architecture
 ![AI Chatverse Architecture](assets/AI%20ChatVerse%20Architecture.png)
+
+## Quickstart
+The best way to get started with the application is by visiting the application hosted in streamlit community cloud [here](https://ai-chatverse.streamlit.app/).
+
+### Running the latest version of the app from docker
+1. Clone the repository.
+1. Build the image by running
+    ```
+    docker build -t ai_chaverse .
+    ```
+1. Run the application by
+    ```
+    docker run --rm -it -p 8501:8501 ai_chaverse:latest
+    ```
+1. Visit [localhost:8501](http://localhost:8501/)
+
+
 ## Maintainers
 The application is created by [Pevatrons](https://www.pevatrons.net/).
 
