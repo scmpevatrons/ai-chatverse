@@ -22,7 +22,14 @@ What sets AI Chatverse apart is its feature: the ability to dynamically craft a 
 ## Quickstart
 The best way to get started with the application is by visiting the application hosted in streamlit community cloud <a href="https://ai-chatverse.streamlit.app/" target="_blank"> here</a>.
 
-### Running the latest version of the app from docker
+### Running from docker locally via official docker image
+The application can be run locally using docker by running the following command
+
+```
+docker run --rm -it -p 8501:8501 pevatrons/ai-chatverse
+```
+
+### Running the latest version of the app from source in docker
 1. Clone the repository.
 1. Build the image by running
     ```
