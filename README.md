@@ -8,6 +8,18 @@ What sets AI Chatverse apart is its feature: the ability to dynamically craft a 
 ![View your models](assets/edit_and_view_model.png)
 ![Edit or Create Derivative Models](assets/create_or_edit_model.png)
 
+## Table of Contents
+1. [Features](#features)
+1. [The Architecture](#the-architecture)
+1. [Quickstart](#quickstart)
+    1. [Visit the hosted app](#quickstart)
+    1. [Use the official docker image](#running-from-docker-locally-via-official-docker-image)
+    1. [Build the docker image from source](#running-the-latest-version-of-the-app-from-source-in-docker)
+1. [Documentation](#documentation)
+1. [Maintainers](#maintainers)
+1. [Attribution](#attribution)
+
+
 ## Features
 * **Open Source and Free** The project has an opensource license.
 * **Easy Integration with langchain** its very easy to integrate a model available in langchain.
@@ -45,6 +57,8 @@ docker run --rm -it -p 8501:8501 pevatrons/ai-chatverse
     ```
 1. Visit <a href="http://localhost:8501/" target="_blank">localhost:8501</a>
 
+## Documentation
+The documentation for the project is available in <a href="https://ai-chatverse.readthedocs.io/en/latest/index.html" target="_blank">readthedocs</a>.
 
 ## Maintainers
 The application is created by <a href="https://www.pevatrons.net/" target="_blank">Pevatrons</a>.
