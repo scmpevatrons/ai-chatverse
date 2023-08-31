@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app_utils &mdash; AI ChatVerse 0.5.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=1dd76d02"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AI ChatVerse
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction to AI ChatVerse</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Code Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AI ChatVerse</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">app_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for app_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module has the necesary utils to deal with App Interface and intereactions</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">streamlit_nested_layout</span>
+<span class="kn">import</span> <span class="nn">streamlit</span> <span class="k">as</span> <span class="nn">st</span>
+<span class="kn">from</span> <span class="nn">models.base_model</span> <span class="kn">import</span> <span class="n">BaseLLMModel</span>
+<span class="kn">from</span> <span class="nn">models.message</span> <span class="kn">import</span> <span class="n">Message</span>
+<span class="kn">from</span> <span class="nn">backend.backend</span> <span class="kn">import</span> <span class="n">get_models</span><span class="p">,</span> <span class="n">Conversation</span><span class="p">,</span>\
+                    <span class="n">ModelMetaInfo</span><span class="p">,</span> <span class="n">start_conversation</span><span class="p">,</span> \
+                    <span class="n">summmarize_conversation</span><span class="p">,</span> <span class="n">get_handler</span>
+<span class="kn">from</span> <span class="nn">ui_elements.format_option</span> <span class="kn">import</span> <span class="n">FormatOption</span>
+
+
+<div class="viewcode-block" id="render_user_message">
+<a class="viewcode-back" href="../app_utils.html#app_utils.render_user_message">[docs]</a>
+<span class="k">def</span> <span class="nf">render_user_message</span><span class="p">(</span><span class="n">message</span><span class="p">:</span><span class="n">Message</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function renders the user message</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        message: The message object containing user message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">columns_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+    <span class="n">user_col</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">(</span><span class="n">columns_weights</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">user_col</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">chat_message</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">):</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%I:%M %p&quot;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="render_system_message">
+<a class="viewcode-back" href="../app_utils.html#app_utils.render_system_message">[docs]</a>
+<span class="k">def</span> <span class="nf">render_system_message</span><span class="p">(</span><span class="n">message</span><span class="p">:</span><span class="n">Message</span><span class="p">,</span> <span class="n">previous_user_message</span><span class="p">:</span><span class="n">Message</span><span class="p">,</span>
+                          <span class="n">message_placeholder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">container</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">calculate_time</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">icon_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">tuple</span><span class="p">[</span><span class="n">st</span><span class="o">.</span><span class="n">container</span><span class="p">,</span> <span class="n">st</span><span class="o">.</span><span class="n">empty</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function renders the system message</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        message: The message object containing system message</span>
+<span class="sd">        previous_user_message: The previous user message</span>
+<span class="sd">        message_placeholder: The placeholder to write the message</span>
+<span class="sd">        container: The container of the system message.</span>
+<span class="sd">        calculate_time: Whether to calculate the time taken for the system to respond</span>
+<span class="sd">        icon_path: The path to Model chat Icon</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The container and the message placeholder of the system message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">columns_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">system_col</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">(</span><span class="n">columns_weights</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">system_col</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">container</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">container</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">chat_message</span><span class="p">(</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="n">avatar</span><span class="o">=</span><span class="n">icon_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">container</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">container</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">message_placeholder</span><span class="p">:</span>
+                <span class="n">message_placeholder</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">message_placeholder</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+                <span class="n">message_placeholder</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">calculate_time</span><span class="p">:</span>
+        <span class="c1"># columns to store the time taken for the system to respond</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">system_time_col</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">(</span><span class="n">columns_weights</span><span class="p">)</span>
+        <span class="n">time_taken_for_response</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">-</span> <span class="n">previous_user_message</span><span class="o">.</span><span class="n">timestamp</span>
+        <span class="n">time_in_ms</span> <span class="o">=</span> <span class="n">time_taken_for_response</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">system_time_col</span><span class="p">:</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;🕓 </span><span class="si">{</span><span class="n">time_in_ms</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">s &quot;</span> <span class="o">+</span> <span class="n">message</span><span class="o">.</span><span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%I:%M %p&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">container</span><span class="p">,</span> <span class="n">message_placeholder</span></div>
+
+
+
+<div class="viewcode-block" id="load_models">
+<a class="viewcode-back" href="../app_utils.html#app_utils.load_models">[docs]</a>
+<span class="k">def</span> <span class="nf">load_models</span><span class="p">(</span><span class="n">config_file</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">base_path</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModelMetaInfo</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function loads the models from the config file</span>
+<span class="sd">    If the models are already loaded, it returns the models from the session state</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        config_file: The path to the config file</span>
+<span class="sd">        base_path: The base path of the app</span>
+<span class="sd">    Returns:</span>
+<span class="sd">       A dictionary of models with key as the model identifier and value as the model meta info object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;models&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">:</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="n">get_models</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="n">base_path</span><span class="p">)</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">models</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">models</span></div>
+
+
+
+<div class="viewcode-block" id="load_conversations">
+<a class="viewcode-back" href="../app_utils.html#app_utils.load_conversations">[docs]</a>
+<span class="k">def</span> <span class="nf">load_conversations</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">List</span><span class="p">[</span><span class="n">Conversation</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function loads the conversations from the session state</span>
+<span class="sd">    If the conversations are not loaded, it initializes the conversations</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The list of conversations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;conversations&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">:</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;conversations&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">conversations</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">conversations</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;conversations&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">conversations</span></div>
+
+
+
+<div class="viewcode-block" id="set_current_conversation">
+<a class="viewcode-back" href="../app_utils.html#app_utils.set_current_conversation">[docs]</a>
+<span class="k">def</span> <span class="nf">set_current_conversation</span><span class="p">(</span><span class="n">conversation</span><span class="p">:</span><span class="n">Conversation</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function sets the current conversation to the session state</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        conversation: The conversation object to set as current conversation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;current_conversation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">conversation</span></div>
+
+
+
+<div class="viewcode-block" id="get_current_conversation">
+<a class="viewcode-back" href="../app_utils.html#app_utils.get_current_conversation">[docs]</a>
+<span class="k">def</span> <span class="nf">get_current_conversation</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Conversation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns the current conversation</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The current conversation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;current_conversation&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">:</span>
+        <span class="n">current_conversation</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;current_conversation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">current_conversation</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;current_conversation&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">current_conversation</span></div>
+
+
+
+<div class="viewcode-block" id="reset_conversation">
+<a class="viewcode-back" href="../app_utils.html#app_utils.reset_conversation">[docs]</a>
+<span class="k">def</span> <span class="nf">reset_conversation</span><span class="p">()</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function resets the screen to start a new conversation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;current_conversation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="conversation_on_click">
+<a class="viewcode-back" href="../app_utils.html#app_utils.conversation_on_click">[docs]</a>
+<span class="k">def</span> <span class="nf">conversation_on_click</span><span class="p">(</span><span class="n">conversation</span><span class="p">:</span><span class="n">Conversation</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Callable</span><span class="p">[[],</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns a function that is called when a conversation is clicked</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        conversation: The conversation object of the clicked conversation</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The function callback that is called when the conversation is clicked</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">conversation_clicked_inner</span><span class="p">():</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;current_conversation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">conversation</span>
+    <span class="k">return</span> <span class="n">conversation_clicked_inner</span></div>
+
+
+
+<div class="viewcode-block" id="render_sidebar">
+<a class="viewcode-back" href="../app_utils.html#app_utils.render_sidebar">[docs]</a>
+<span class="k">def</span> <span class="nf">render_sidebar</span><span class="p">(</span><span class="n">current_conversation</span><span class="p">:</span><span class="n">Conversation</span><span class="p">,</span> <span class="n">all_conversations</span><span class="p">:</span><span class="n">List</span><span class="p">[</span><span class="n">Conversation</span><span class="p">])</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function renders the sidebar with the list of conversations</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        current_conversation: The current conversation</span>
+<span class="sd">        all_conversations: The list of all conversations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="p">:</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;🧵 Start a new conversation&quot;</span><span class="p">,</span> <span class="n">use_container_width</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                  <span class="n">on_click</span><span class="o">=</span><span class="n">reset_conversation</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">conversation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_conversations</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">conversation</span><span class="o">.</span><span class="n">is_summarized</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">button_type</span> <span class="o">=</span> <span class="s2">&quot;primary&quot;</span> <span class="k">if</span> <span class="n">conversation</span> <span class="o">==</span> <span class="n">current_conversation</span> <span class="k">else</span> <span class="s2">&quot;secondary&quot;</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">conversation</span><span class="o">.</span><span class="n">conversation_topic</span> <span class="p">,</span> <span class="n">use_container_width</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                      <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;conversation_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="nb">type</span><span class="o">=</span><span class="n">button_type</span><span class="p">,</span>
+                    <span class="n">on_click</span><span class="o">=</span><span class="n">conversation_on_click</span><span class="p">(</span><span class="n">conversation</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="on_new_user_messaage">
+<a class="viewcode-back" href="../app_utils.html#app_utils.on_new_user_messaage">[docs]</a>
+<span class="k">def</span> <span class="nf">on_new_user_messaage</span><span class="p">(</span><span class="n">current_conversation</span><span class="p">:</span><span class="n">Conversation</span><span class="p">,</span> <span class="n">model_used_by_user</span><span class="p">:</span><span class="n">ModelMetaInfo</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is called when a new user message is submitted</span>
+<span class="sd">    A new conversation is created if the current conversation doesnt exist</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        current_conversation: The current conversation</span>
+<span class="sd">        model_used_by_user: The model used by the user</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">chat_input</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;user_input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prompt</span>
+    <span class="k">if</span> <span class="n">current_conversation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">model_used_by_user</span><span class="o">.</span><span class="n">set_value_from_sidebar</span><span class="p">()</span>
+        <span class="n">conversation</span> <span class="o">=</span> <span class="n">start_conversation</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">model_used_by_user</span><span class="p">)</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;conversations&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conversation</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">conversation</span> <span class="o">=</span> <span class="n">current_conversation</span>
+    <span class="n">set_current_conversation</span><span class="p">(</span><span class="n">conversation</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="render_conversation">
+<a class="viewcode-back" href="../app_utils.html#app_utils.render_conversation">[docs]</a>
+<span class="k">def</span> <span class="nf">render_conversation</span><span class="p">(</span><span class="n">current_conversation</span><span class="p">:</span><span class="n">Conversation</span><span class="p">,</span> <span class="n">model_used_by_user</span><span class="p">:</span><span class="n">ModelMetaInfo</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function renders the conversation</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        current_conversation: The current conversation</span>
+<span class="sd">        model_used_by_user: The model used by the user for the conversation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">current_conversation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">model_used_by_user</span><span class="p">,</span> <span class="s1">&#39;icon&#39;</span><span class="p">):</span>
+        <span class="n">icon_path</span> <span class="o">=</span> <span class="n">model_used_by_user</span><span class="o">.</span><span class="n">icon</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">icon_path</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="n">current_conversation</span><span class="o">.</span><span class="n">llm_model</span><span class="o">.</span><span class="n">get_messages</span><span class="p">()</span>
+    <span class="n">last_user_message</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">message_type</span> <span class="o">==</span> <span class="s2">&quot;USER&quot;</span><span class="p">:</span>
+            <span class="n">render_user_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="n">last_user_message</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">render_system_message</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">last_user_message</span><span class="p">,</span> <span class="n">icon_path</span><span class="o">=</span><span class="n">model_used_by_user</span><span class="o">.</span><span class="n">icon</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;user_input&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">:</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;user_input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">user_input</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;user_input&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">user_input</span><span class="p">:</span>
+        <span class="n">user_message</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">user_input</span><span class="p">,</span> <span class="n">message_type</span><span class="o">=</span><span class="s1">&#39;USER&#39;</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+        <span class="n">render_user_message</span><span class="p">(</span><span class="n">user_message</span><span class="p">)</span>
+        <span class="n">system_message</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;I am thinking...&quot;</span><span class="p">,</span> <span class="n">message_type</span><span class="o">=</span><span class="s2">&quot;AI&quot;</span><span class="p">)</span>
+        <span class="n">system_container</span><span class="p">,</span> <span class="n">placeholder</span> <span class="o">=</span> <span class="n">render_system_message</span><span class="p">(</span><span class="n">system_message</span><span class="p">,</span> <span class="n">user_message</span><span class="p">,</span>
+                                                              <span class="n">calculate_time</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                                              <span class="n">icon_path</span><span class="o">=</span><span class="n">icon_path</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">system_container</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">spinner</span><span class="p">(</span><span class="s2">&quot;:hourglass_flowing_sand:&quot;</span><span class="p">):</span>
+                <span class="n">handler</span> <span class="o">=</span> <span class="n">get_handler</span><span class="p">(</span><span class="n">placeholder</span><span class="p">)</span>
+                <span class="n">system_response</span> <span class="o">=</span> <span class="n">current_conversation</span><span class="o">.</span><span class="n">llm_model</span><span class="o">.</span><span class="n">get_prompt_response</span><span class="p">(</span>
+                    <span class="n">user_message</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="n">handler</span><span class="p">)</span>
+                <span class="n">system_message</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">system_response</span>
+                <span class="n">system_message</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">render_system_message</span><span class="p">(</span><span class="n">system_message</span><span class="p">,</span> <span class="n">user_message</span><span class="p">,</span> <span class="n">placeholder</span><span class="p">,</span> <span class="n">system_container</span><span class="p">,</span>
+                                  <span class="n">icon_path</span><span class="o">=</span><span class="n">icon_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">current_conversation</span><span class="o">.</span><span class="n">is_summarized</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="p">:</span>
+                <span class="n">container</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+                <span class="n">handler</span> <span class="o">=</span> <span class="n">get_handler</span><span class="p">(</span><span class="n">container</span><span class="p">)</span>
+                <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">spinner</span><span class="p">(</span><span class="s2">&quot;Summarizing conversation...&quot;</span><span class="p">):</span>
+                    <span class="n">sumarized_text</span> <span class="o">=</span> <span class="n">summmarize_conversation</span><span class="p">(</span><span class="n">current_conversation</span><span class="p">,</span>
+                                                             <span class="n">user_input</span><span class="p">,</span> <span class="n">handler</span><span class="p">)</span>
+                <span class="n">container</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+                <span class="k">del</span> <span class="n">container</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">sumarized_text</span><span class="p">,</span> <span class="n">use_container_width</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span>
+                          <span class="n">on_click</span><span class="o">=</span><span class="n">conversation_on_click</span><span class="p">(</span><span class="n">current_conversation</span><span class="p">))</span>
+                <span class="n">current_conversation</span><span class="o">.</span><span class="n">conversation_topic</span> <span class="o">=</span> <span class="n">sumarized_text</span>
+                <span class="n">current_conversation</span><span class="o">.</span><span class="n">is_summarized</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;user_input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+
+<div class="viewcode-block" id="render_model_description">
+<a class="viewcode-back" href="../app_utils.html#app_utils.render_model_description">[docs]</a>
+<span class="k">def</span> <span class="nf">render_model_description</span><span class="p">(</span><span class="n">current_conversation</span><span class="p">:</span><span class="n">Conversation</span><span class="p">,</span> \
+                             <span class="n">model_used_by_user</span><span class="p">:</span><span class="n">ModelMetaInfo</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function renders the model description</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        current_conversation: The current conversation</span>
+<span class="sd">        model_used_by_user: The model used by the user for the conversation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">model_used_by_user</span><span class="p">,</span> <span class="s1">&#39;icon&#39;</span><span class="p">):</span>
+        <span class="n">icon_path</span> <span class="o">=</span> <span class="n">model_used_by_user</span><span class="o">.</span><span class="n">icon</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">icon_path</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">model_icon_col</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span>  <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">current_conversation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">model_icon_col</span><span class="p">:</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="n">icon_path</span><span class="p">)</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">model_used_by_user</span><span class="o">.</span><span class="n">description</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_model_locked">
+<a class="viewcode-back" href="../app_utils.html#app_utils.is_model_locked">[docs]</a>
+<span class="k">def</span> <span class="nf">is_model_locked</span><span class="p">()</span><span class="o">-&gt;</span><span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns whether the model is locked for edit/create</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        True if the model is locked, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;model_meta_dict&#39;</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_meta_dict&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="on_click_model_in_focus">
+<a class="viewcode-back" href="../app_utils.html#app_utils.on_click_model_in_focus">[docs]</a>
+<span class="k">def</span> <span class="nf">on_click_model_in_focus</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;view&#39;</span><span class="p">,</span> <span class="s1">&#39;model_create&#39;</span><span class="p">,</span> <span class="s1">&#39;model_delete&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;model_view&#39;</span><span class="p">,</span> <span class="s1">&#39;model_edit&#39;</span><span class="p">],</span>
+                            <span class="n">model_meta_info</span><span class="p">:</span><span class="n">ModelMetaInfo</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Callable</span><span class="p">[[],</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns a function that is called when a model is clicked</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        mode: The mode in which the model will be used</span>
+<span class="sd">        model_meta_info: The model meta information</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The function callback that is to be called when the model is clicked</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_meta</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">model_meta_info</span><span class="p">:</span>
+        <span class="n">model_meta</span> <span class="o">=</span> <span class="n">model_meta_info</span><span class="o">.</span><span class="n">get_serialised_model_data</span><span class="p">(</span>
+                                                    <span class="n">view_mode</span><span class="o">=</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;model_view&#39;</span><span class="p">,</span>
+                                                    <span class="n">create_mode</span><span class="o">=</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;model_create&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">edit_model_inner</span><span class="p">():</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_meta_dict&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_meta</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s2">&quot;chosen_model_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_meta_info</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">model_meta_info</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode</span>
+    <span class="k">return</span> <span class="n">edit_model_inner</span></div>
+
+
+
+
+<div class="viewcode-block" id="state_of_model">
+<a class="viewcode-back" href="../app_utils.html#app_utils.state_of_model">[docs]</a>
+<span class="k">def</span> <span class="nf">state_of_model</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;view&#39;</span><span class="p">,</span> <span class="s1">&#39;model_create&#39;</span><span class="p">,</span> <span class="s1">&#39;model_delete&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;model_view&#39;</span><span class="p">,</span> <span class="s1">&#39;model_edit&#39;</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns the state of the model</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The state of the model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;model_state&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">:</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;view&#39;</span>
+    <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_state&#39;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="get_model_in_focus">
+<a class="viewcode-back" href="../app_utils.html#app_utils.get_model_in_focus">[docs]</a>
+<span class="k">def</span> <span class="nf">get_model_in_focus</span><span class="p">()</span><span class="o">-&gt;</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FormatOption</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns the model meta information of the model in focus</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The model meta information of the model in focus</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_meta_dict&#39;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="cancel_model_focus_mode">
+<a class="viewcode-back" href="../app_utils.html#app_utils.cancel_model_focus_mode">[docs]</a>
+<span class="k">def</span> <span class="nf">cancel_model_focus_mode</span><span class="p">()</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function cancels the edit mode</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;view&#39;</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_meta_dict&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<span class="n">FIELD_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;STRING&quot;</span><span class="p">,</span> <span class="s2">&quot;INT&quot;</span><span class="p">,</span> <span class="s2">&quot;FLOAT&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;BOOL&quot;</span><span class="p">,</span> <span class="s2">&quot;LIST&quot;</span><span class="p">,</span> <span class="s2">&quot;DICT&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;SECRET_STRING&quot;</span><span class="p">,</span> <span class="s2">&quot;LONG_STRING&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;IMAGE_PATH&quot;</span><span class="p">]</span>
+
+
+
+<div class="viewcode-block" id="render_model_view">
+<a class="viewcode-back" href="../app_utils.html#app_utils.render_model_view">[docs]</a>
+<span class="k">def</span> <span class="nf">render_model_view</span><span class="p">(</span><span class="n">model_meta_info</span><span class="p">:</span><span class="n">ModelMetaInfo</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function renders the model view</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        model_meta_info: The model meta information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;◀️ Back&quot;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;back&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">cancel_model_focus_mode</span><span class="p">)</span>
+    <span class="n">model_dict</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_meta_dict&#39;</span><span class="p">]</span>
+    <span class="n">model_meta_info</span><span class="o">.</span><span class="n">render_model_in_view_mode</span><span class="p">(</span><span class="n">model_dict</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="on_base_model_change">
+<a class="viewcode-back" href="../app_utils.html#app_utils.on_base_model_change">[docs]</a>
+<span class="k">def</span> <span class="nf">on_base_model_change</span><span class="p">(</span><span class="n">key</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">model_meta_infos</span><span class="p">:</span><span class="n">List</span><span class="p">[</span><span class="n">ModelMetaInfo</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is called when the base model is changed</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        key: The key of the selectbox</span>
+<span class="sd">        model_meta_infos: The list of model meta information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">selected_name</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;chosen_model_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">selected_name</span>
+    <span class="n">selected_model</span> <span class="o">=</span> <span class="n">get_selected_model</span><span class="p">(</span><span class="n">model_meta_infos</span><span class="p">)</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_meta_dict&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">selected_model</span><span class="o">.</span><span class="n">get_serialised_model_data</span><span class="p">(</span>
+        <span class="n">create_mode</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_selected_model">
+<a class="viewcode-back" href="../app_utils.html#app_utils.get_selected_model">[docs]</a>
+<span class="k">def</span> <span class="nf">get_selected_model</span><span class="p">(</span><span class="n">model_meta_infos</span><span class="p">:</span><span class="n">List</span><span class="p">[</span><span class="n">ModelMetaInfo</span><span class="p">])</span><span class="o">-&gt;</span><span class="n">Optional</span><span class="p">[</span><span class="n">ModelMetaInfo</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns the selected model</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        model_meta_infos: The list of model meta information objects</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The selected model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;chosen_model_name&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span> <span class="ow">or</span> \
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;chosen_model_name&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">model_meta_infos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">chosen_model</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">model_meta_infos</span> 
+                    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;chosen_model_name&#39;</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="n">chosen_model</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">chosen_model</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="add_model">
+<a class="viewcode-back" href="../app_utils.html#app_utils.add_model">[docs]</a>
+<span class="k">def</span> <span class="nf">add_model</span><span class="p">(</span><span class="n">model_meta_info</span><span class="p">:</span><span class="n">ModelMetaInfo</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function adds a model</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        model_meta_info: The model meta information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new_model_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">]))</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">model_meta_info</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">model_meta_info</span><span class="o">.</span><span class="n">is_persistent</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">model_meta_info</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">new_model_key</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">][</span><span class="n">new_model_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_meta_info</span></div>
+
+
+
+<div class="viewcode-block" id="model_exists">
+<a class="viewcode-back" href="../app_utils.html#app_utils.model_exists">[docs]</a>
+<span class="k">def</span> <span class="nf">model_exists</span><span class="p">(</span><span class="n">models</span><span class="p">:</span><span class="nb">list</span><span class="p">[</span><span class="n">ModelMetaInfo</span><span class="p">],</span> <span class="n">name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">ignore</span><span class="p">:</span><span class="n">Optional</span><span class="p">[</span><span class="n">ModelMetaInfo</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function checks if the model exists with the given name</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        models: The list of models</span>
+<span class="sd">        name: The name of the model</span>
+<span class="sd">        ignore: The model to ignore (used in edit mode)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        True if the model exists, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="n">ignore</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="create_model">
+<a class="viewcode-back" href="../app_utils.html#app_utils.create_model">[docs]</a>
+<span class="k">def</span> <span class="nf">create_model</span><span class="p">(</span><span class="n">model_meta_info</span><span class="p">:</span><span class="n">ModelMetaInfo</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function creates a model</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        model_meta_info: The model meta information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_meta_dict</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_meta_dict&#39;</span><span class="p">]</span>
+    <span class="n">model_meta_dict</span> <span class="o">=</span> <span class="n">model_meta_info</span><span class="o">.</span><span class="n">get_data_from_meta</span><span class="p">(</span><span class="n">model_meta_dict</span><span class="p">)</span>
+    <span class="n">models</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">model_meta_info</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">model_meta_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">model_exists</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">toast</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model with name </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exists&quot;</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="s2">&quot;⚠️&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="n">selected_model</span> <span class="o">=</span> <span class="n">get_selected_model</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">selected_model</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">model_meta_dict</span><span class="p">:</span>
+            <span class="n">model_meta_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="n">model_meta_info</span> <span class="o">=</span> <span class="n">model_meta_info</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="n">model_meta_dict</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">model_meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">add_model</span><span class="p">(</span><span class="n">model_meta_info</span><span class="p">)</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;view&#39;</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_meta_dict&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="edit_model">
+<a class="viewcode-back" href="../app_utils.html#app_utils.edit_model">[docs]</a>
+<span class="k">def</span> <span class="nf">edit_model</span><span class="p">(</span><span class="n">model_meta_info</span><span class="p">:</span><span class="n">ModelMetaInfo</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function edits a model</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        model_meta_info: The model meta information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_meta_dict</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_meta_dict&#39;</span><span class="p">]</span>
+    <span class="n">model_meta_dict</span> <span class="o">=</span> <span class="n">model_meta_info</span><span class="o">.</span><span class="n">get_data_from_meta</span><span class="p">(</span><span class="n">model_meta_dict</span><span class="p">)</span>
+    <span class="n">models</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">model_meta_info</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">model_meta_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">model_exists</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="n">model_meta_info</span><span class="p">):</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">toast</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model with name </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exists&quot;</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="s2">&quot;⚠️&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="n">valid_edit</span> <span class="o">=</span> <span class="n">model_meta_info</span><span class="o">.</span><span class="n">validate_edit_and_save_state</span><span class="p">(</span><span class="n">model_meta_dict</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_edit</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;view&#39;</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_meta_dict&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="render_model_edit">
+<a class="viewcode-back" href="../app_utils.html#app_utils.render_model_edit">[docs]</a>
+<span class="k">def</span> <span class="nf">render_model_edit</span><span class="p">(</span><span class="n">model_meta_info</span><span class="p">:</span><span class="n">ModelMetaInfo</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function renders the model create view</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        model_meta_info: The model meta information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;◀️ Back&quot;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;back&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">cancel_model_focus_mode</span><span class="p">)</span>
+    <span class="n">model_dict</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_meta_dict&#39;</span><span class="p">]</span>
+    <span class="n">model_meta_info</span><span class="o">.</span><span class="n">render_model_in_edit_mode</span><span class="p">(</span><span class="n">model_dict</span><span class="p">)</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <span class="k">with</span> <span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;Edit and Save&quot;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;edit&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">edit_model</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">model_meta_info</span><span class="p">,</span> <span class="p">),</span>
+                  <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_current_model_index">
+<a class="viewcode-back" href="../app_utils.html#app_utils.get_current_model_index">[docs]</a>
+<span class="k">def</span> <span class="nf">get_current_model_index</span><span class="p">(</span><span class="n">models</span><span class="p">:</span><span class="n">List</span><span class="p">[</span><span class="n">ModelMetaInfo</span><span class="p">],</span> <span class="n">chosen_model_name</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns the index for the user chosen model</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        models: The list of models</span>
+<span class="sd">        chosen_model_name: The current model</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The current model index</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">chosen_model_name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">key</span>
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="render_model_create">
+<a class="viewcode-back" href="../app_utils.html#app_utils.render_model_create">[docs]</a>
+<span class="k">def</span> <span class="nf">render_model_create</span><span class="p">(</span><span class="n">model_meta_infos</span><span class="p">:</span><span class="n">List</span><span class="p">[</span><span class="n">ModelMetaInfo</span><span class="p">])</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function renders the model create view</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        model_meta_info: The model meta information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;◀️ Back&quot;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;back&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">cancel_model_focus_mode</span><span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;inherit_from&quot;</span>
+    <span class="n">model_dict</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;model_meta_dict&#39;</span><span class="p">]</span>
+    <span class="n">chosen_model_name</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;chosen_model_name&#39;</span><span class="p">)</span>
+    <span class="n">model_index</span> <span class="o">=</span> <span class="n">get_current_model_index</span><span class="p">(</span><span class="n">model_meta_infos</span><span class="p">,</span> <span class="n">chosen_model_name</span><span class="p">)</span>
+    <span class="n">chosen_model_meta</span> <span class="o">=</span> <span class="n">model_meta_infos</span><span class="p">[</span><span class="n">model_index</span><span class="p">]</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">selectbox</span><span class="p">(</span><span class="s2">&quot;Inherit From&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">model_meta_infos</span><span class="p">],</span>
+                 <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">on_change</span><span class="o">=</span><span class="n">on_base_model_change</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">model_meta_infos</span><span class="p">),</span>
+                 <span class="n">index</span><span class="o">=</span><span class="n">model_index</span><span class="p">)</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;We support creating session models from available models for now&quot;</span><span class="p">)</span>
+    <span class="n">chosen_model_meta</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">render_model_in_create_mode</span><span class="p">(</span><span class="n">model_dict</span><span class="p">)</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="k">with</span> <span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;Create&quot;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;create&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">create_model</span><span class="p">,</span>
+                  <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">chosen_model_meta</span><span class="p">,),</span>
+                  <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="render_models_view">
+<a class="viewcode-back" href="../app_utils.html#app_utils.render_models_view">[docs]</a>
+<span class="k">def</span> <span class="nf">render_models_view</span><span class="p">(</span><span class="n">config_file</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">base_path</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function renders the models view</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        config_file: The path to the config file</span>
+<span class="sd">        base_path: The base path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;This is the page where you can edit or create a session model&quot;</span><span class="p">)</span>
+
+    <span class="n">session_tab</span><span class="p">,</span> <span class="n">persistent_tab</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">tabs</span><span class="p">([</span><span class="s2">&quot;Session Models&quot;</span><span class="p">,</span> <span class="s2">&quot;Persistent Model&quot;</span><span class="p">])</span>
+    <span class="n">models</span> <span class="o">=</span> <span class="n">load_models</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="n">base_path</span><span class="p">)</span>
+    <span class="n">persistent_models</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">model</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">is_persistent</span><span class="p">}</span>
+    <span class="n">session_models</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">model</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">model</span><span class="o">.</span><span class="n">is_persistent</span><span class="p">}</span>
+
+
+    <span class="k">with</span> <span class="n">persistent_tab</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">model_key</span><span class="p">,</span> <span class="n">model_meta_info</span> <span class="ow">in</span> <span class="n">persistent_models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">pic</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">,</span> <span class="n">view_button</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="k">with</span> <span class="n">pic</span><span class="p">:</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="n">model_meta_info</span><span class="o">.</span><span class="n">icon</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">meta_info</span><span class="p">:</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">subheader</span><span class="p">(</span><span class="n">model_meta_info</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">model_meta_info</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">view_button</span><span class="p">:</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;View&quot;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">model_key</span><span class="p">,</span>
+                          <span class="n">on_click</span><span class="o">=</span><span class="n">on_click_model_in_focus</span><span class="p">(</span><span class="s1">&#39;model_view&#39;</span><span class="p">,</span> <span class="n">model_meta_info</span><span class="p">))</span>
+
+    <span class="k">with</span> <span class="n">session_tab</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">session_models</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No session models available&quot;</span><span class="p">)</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;Create New Model&quot;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;create_new_model&quot;</span><span class="p">,</span>
+                  <span class="n">on_click</span><span class="o">=</span><span class="n">on_click_model_in_focus</span><span class="p">(</span><span class="s1">&#39;model_create&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">model_key</span><span class="p">,</span> <span class="n">model_meta_info</span> <span class="ow">in</span> <span class="n">session_models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">pic</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">,</span> <span class="n">button_section</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="k">with</span> <span class="n">pic</span><span class="p">:</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="n">model_meta_info</span><span class="o">.</span><span class="n">icon</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">meta_info</span><span class="p">:</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">subheader</span><span class="p">(</span><span class="n">model_meta_info</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">model_meta_info</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">button_section</span><span class="p">:</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;👁️&quot;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_key</span><span class="si">}</span><span class="s2">_view&quot;</span><span class="p">,</span>
+                          <span class="n">on_click</span><span class="o">=</span><span class="n">on_click_model_in_focus</span><span class="p">(</span><span class="s1">&#39;model_view&#39;</span><span class="p">,</span> <span class="n">model_meta_info</span><span class="p">))</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;✏️&quot;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_key</span><span class="si">}</span><span class="s2">_edit&quot;</span><span class="p">,</span>
+                          <span class="n">on_click</span><span class="o">=</span><span class="n">on_click_model_in_focus</span><span class="p">(</span><span class="s1">&#39;model_edit&#39;</span><span class="p">,</span> <span class="n">model_meta_info</span><span class="p">))</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;🗑️&quot;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_key</span><span class="si">}</span><span class="s2">_delete&quot;</span><span class="p">,</span>
+                          <span class="n">on_click</span><span class="o">=</span><span class="n">on_click_model_in_focus</span><span class="p">(</span><span class="s1">&#39;model_delete&#39;</span><span class="p">,</span> <span class="n">model_meta_info</span><span class="p">))</span></div>
+
+                
+
+<div class="viewcode-block" id="set_page_config">
+<a class="viewcode-back" href="../app_utils.html#app_utils.set_page_config">[docs]</a>
+<span class="k">def</span> <span class="nf">set_page_config</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function sets the page config for Streamlit app</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">about</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    # :robot_face: AI ChatVerse</span>
+<span class="s2">    This is an Opensource App for playing with Language Models</span>
+
+<span class="s2">    Created by [pevatrons](https://www.pevatrons.net)</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">set_page_config</span><span class="p">(</span><span class="n">page_title</span><span class="o">=</span><span class="s2">&quot;AI ChatVerse&quot;</span><span class="p">,</span> <span class="n">page_icon</span><span class="o">=</span><span class="s2">&quot;:robot_face:&quot;</span><span class="p">,</span> <span class="n">menu_items</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;About&#39;</span><span class="p">:</span> <span class="n">about</span>
+    <span class="p">})</span></div>
+
+                
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Pevatrons.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

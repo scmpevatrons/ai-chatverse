@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>models package &mdash; AI ChatVerse 0.5.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=1dd76d02"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pages package" href="pages.html" />
+    <link rel="prev" title="conversations package" href="conversations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AI ChatVerse
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction to AI ChatVerse</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Code Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app_utils.html">app_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backend.html">backend package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conversations.html">conversations package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">models package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#models-base-langchain-model-module">models.base_langchain_model module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.base_langchain_model.BaseLangChainModel"><code class="docutils literal notranslate"><span class="pre">BaseLangChainModel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.base_langchain_model.StreamlitDisplayHandler"><code class="docutils literal notranslate"><span class="pre">StreamlitDisplayHandler</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models-base-model-module">models.base_model module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.base_model.BaseLLMModel"><code class="docutils literal notranslate"><span class="pre">BaseLLMModel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.base_model.FakeLLM"><code class="docutils literal notranslate"><span class="pre">FakeLLM</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models-chat-gpt-module">models.chat_gpt module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.chat_gpt.ChatGPT"><code class="docutils literal notranslate"><span class="pre">ChatGPT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models-llama2-module">models.llama2 module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.llama2.LLAMA2"><code class="docutils literal notranslate"><span class="pre">LLAMA2</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models-message-module">models.message module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.message.Message"><code class="docutils literal notranslate"><span class="pre">Message</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models-meta-info-module">models.meta_info module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.meta_info.ModelMetaInfo"><code class="docutils literal notranslate"><span class="pre">ModelMetaInfo</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-contents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pages.html">pages package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ui_elements.html">ui_elements package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="%F0%9F%8F%A0_Home.html">🏠_Home module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AI ChatVerse</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">Code Documentation</a></li>
+      <li class="breadcrumb-item active">models package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/models.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="models-package">
+<h1>models package<a class="headerlink" href="#models-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="models-base-langchain-model-module">
+<h2>models.base_langchain_model module<a class="headerlink" href="#models-base-langchain-model-module" title="Link to this heading"></a></h2>
+<p id="module-models.base_langchain_model">This module implements the base class for all LangChain models</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="models.base_langchain_model.BaseLangChainModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.base_langchain_model.</span></span><span class="sig-name descname"><span class="pre">BaseLangChainModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">llm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LLM</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SimpleChatModel</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_kvargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kvargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/base_langchain_model.html#BaseLangChainModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.base_langchain_model.BaseLangChainModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#models.base_model.BaseLLMModel" title="models.base_model.BaseLLMModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseLLMModel</span></code></a></p>
+<p>This is the base class for all LangChain models</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="models.base_langchain_model.BaseLangChainModel.get_prompt_response">
+<span class="sig-name descname"><span class="pre">get_prompt_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseCallbackHandler</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/models/base_langchain_model.html#BaseLangChainModel.get_prompt_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.base_langchain_model.BaseLangChainModel.get_prompt_response" title="Link to this definition"></a></dt>
+<dd><p>This method is used to get a response to a prompt</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> – The message to give to the LLM</p></li>
+<li><p><strong>stream_handler</strong> – if passed response is streamed via handler</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The response from the LLM</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.base_langchain_model.BaseLangChainModel.get_prompt_response_without_memory">
+<span class="sig-name descname"><span class="pre">get_prompt_response_without_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseCallbackHandler</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/models/base_langchain_model.html#BaseLangChainModel.get_prompt_response_without_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.base_langchain_model.BaseLangChainModel.get_prompt_response_without_memory" title="Link to this definition"></a></dt>
+<dd><p>This method is used to get a response to a prompt
+The message is given to the LLM without any memory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> – The message to give to the LLM</p></li>
+<li><p><strong>stream_handler</strong> – if passed response is streamed via handler</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The response from the LLM</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="models.base_langchain_model.StreamlitDisplayHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.base_langchain_model.</span></span><span class="sig-name descname"><span class="pre">StreamlitDisplayHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">container</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'markdown'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/base_langchain_model.html#StreamlitDisplayHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.base_langchain_model.StreamlitDisplayHandler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCallbackHandler</span></code></p>
+<p>This class is used to display the output of the LLM in streamlit</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="models.base_langchain_model.StreamlitDisplayHandler.on_llm_end">
+<span class="sig-name descname"><span class="pre">on_llm_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/models/base_langchain_model.html#StreamlitDisplayHandler.on_llm_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.base_langchain_model.StreamlitDisplayHandler.on_llm_end" title="Link to this definition"></a></dt>
+<dd><p>This method is used to display the output of the LLM in streamlit
+:param response: The response from the LLM
+:param **kwargs: The keyword arguments</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.base_langchain_model.StreamlitDisplayHandler.on_llm_new_token">
+<span class="sig-name descname"><span class="pre">on_llm_new_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/models/base_langchain_model.html#StreamlitDisplayHandler.on_llm_new_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.base_langchain_model.StreamlitDisplayHandler.on_llm_new_token" title="Link to this definition"></a></dt>
+<dd><p>This method is used to display the output of the LLM in streamlit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>token</strong> – The newly generated token</p></li>
+<li><p><strong>**kwargs</strong> – The keyword arguments</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="models-base-model-module">
+<h2>models.base_model module<a class="headerlink" href="#models-base-model-module" title="Link to this heading"></a></h2>
+<p id="module-models.base_model">This file contains the base model class that all models should inherit from</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="models.base_model.BaseLLMModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.base_model.</span></span><span class="sig-name descname"><span class="pre">BaseLLMModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kvargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/base_model.html#BaseLLMModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.base_model.BaseLLMModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This is the base model class that all models should inherit from</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="models.base_model.BaseLLMModel.add_ai_message">
+<span class="sig-name descname"><span class="pre">add_ai_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/base_model.html#BaseLLMModel.add_ai_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.base_model.BaseLLMModel.add_ai_message" title="Link to this definition"></a></dt>
+<dd><p>This method is used to add an AI message to the conversation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> – The message to add to the conversation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.base_model.BaseLLMModel.add_user_message">
+<span class="sig-name descname"><span class="pre">add_user_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/base_model.html#BaseLLMModel.add_user_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.base_model.BaseLLMModel.add_user_message" title="Link to this definition"></a></dt>
+<dd><p>This method is used to add a user message to the conversation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> – The message to add to the conversation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.base_model.BaseLLMModel.get_messages">
+<span class="sig-name descname"><span class="pre">get_messages</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#models.message.Message" title="models.message.Message"><span class="pre">Message</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/models/base_model.html#BaseLLMModel.get_messages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.base_model.BaseLLMModel.get_messages" title="Link to this definition"></a></dt>
+<dd><p>This method is used to get the messages in the conversation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The messages in the conversation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.base_model.BaseLLMModel.get_prompt_response">
+<span class="sig-name descname"><span class="pre">get_prompt_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseCallbackHandler</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/models/base_model.html#BaseLLMModel.get_prompt_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.base_model.BaseLLMModel.get_prompt_response" title="Link to this definition"></a></dt>
+<dd><p>This method is used to get a response to a prompt</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> – The message to give to the LLM</p></li>
+<li><p><strong>stream_handler</strong> – if passed response is streamed via handler</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The response from the LLM</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.base_model.BaseLLMModel.get_prompt_response_without_memory">
+<span class="sig-name descname"><span class="pre">get_prompt_response_without_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseCallbackHandler</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/models/base_model.html#BaseLLMModel.get_prompt_response_without_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.base_model.BaseLLMModel.get_prompt_response_without_memory" title="Link to this definition"></a></dt>
+<dd><p>This method is used to get a response to a prompt
+The message is given to the LLM without any memory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> – The message to give to the LLM</p></li>
+<li><p><strong>stream_handler</strong> – if passed response is streamed via handler</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The response from the LLM</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="models.base_model.FakeLLM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.base_model.</span></span><span class="sig-name descname"><span class="pre">FakeLLM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kvargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/base_model.html#FakeLLM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.base_model.FakeLLM" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This is a fake LLM class that is used for testing</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="models.base_model.FakeLLM.give_response_to_prompt">
+<span class="sig-name descname"><span class="pre">give_response_to_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">messages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#models.message.Message" title="models.message.Message"><span class="pre">Message</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/models/base_model.html#FakeLLM.give_response_to_prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.base_model.FakeLLM.give_response_to_prompt" title="Link to this definition"></a></dt>
+<dd><p>This method is used to give a response to a prompt</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>messages</strong> – The messages to give to the LLM</p></li>
+<li><p><strong>system_prompt</strong> – The system prompt to give to the LLM</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The response from the LLM</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="models-chat-gpt-module">
+<h2>models.chat_gpt module<a class="headerlink" href="#models-chat-gpt-module" title="Link to this heading"></a></h2>
+<p id="module-models.chat_gpt">ChatGPT is a class that inherits from BaseLangChainModel and uses
+the ChatOpenAI class to generate text.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="models.chat_gpt.ChatGPT">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.chat_gpt.</span></span><span class="sig-name descname"><span class="pre">ChatGPT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_kvargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kvargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/chat_gpt.html#ChatGPT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.chat_gpt.ChatGPT" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#models.base_langchain_model.BaseLangChainModel" title="models.base_langchain_model.BaseLangChainModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseLangChainModel</span></code></a></p>
+<p>This is the class for the ChatGPT model</p>
+</dd></dl>
+
+</section>
+<section id="models-llama2-module">
+<h2>models.llama2 module<a class="headerlink" href="#models-llama2-module" title="Link to this heading"></a></h2>
+<p id="module-models.llama2">LLAMA2 model</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="models.llama2.LLAMA2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.llama2.</span></span><span class="sig-name descname"><span class="pre">LLAMA2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_kvargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kvargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/llama2.html#LLAMA2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.llama2.LLAMA2" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#models.base_langchain_model.BaseLangChainModel" title="models.base_langchain_model.BaseLangChainModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseLangChainModel</span></code></a></p>
+<p>This is the class for the LLAMA2 model</p>
+</dd></dl>
+
+</section>
+<section id="models-message-module">
+<h2>models.message module<a class="headerlink" href="#models-message-module" title="Link to this heading"></a></h2>
+<p id="module-models.message">This is the module for the message data class</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="models.message.Message">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.message.</span></span><span class="sig-name descname"><span class="pre">Message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'SYSTEM'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'USER'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'AI'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/message.html#Message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.message.Message" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>This is the class for a message</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.message.Message.message">
+<span class="sig-name descname"><span class="pre">message</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#models.message.Message.message" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.message.Message.message_type">
+<span class="sig-name descname"><span class="pre">message_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'SYSTEM'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'USER'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'AI'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.message.Message.message_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.message.Message.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#models.message.Message.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.message.Message.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'message':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">description='The</span> <span class="pre">message'),</span> <span class="pre">'message_type':</span> <span class="pre">FieldInfo(annotation=Literal['SYSTEM',</span> <span class="pre">'USER',</span> <span class="pre">'AI'],</span> <span class="pre">required=True,</span> <span class="pre">description='The</span> <span class="pre">type</span> <span class="pre">of</span> <span class="pre">message'),</span> <span class="pre">'timestamp':</span> <span class="pre">FieldInfo(annotation=datetime,</span> <span class="pre">required=False,</span> <span class="pre">default_factory=builtin_function_or_method,</span> <span class="pre">description='The</span> <span class="pre">timestamp</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">message')}</span></em><a class="headerlink" href="#models.message.Message.model_fields" title="Link to this definition"></a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.message.Message.timestamp">
+<span class="sig-name descname"><span class="pre">timestamp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#models.message.Message.timestamp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="models-meta-info-module">
+<h2>models.meta_info module<a class="headerlink" href="#models-meta-info-module" title="Link to this heading"></a></h2>
+<p id="module-models.meta_info">This module contains the meta information for a model</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.meta_info.</span></span><span class="sig-name descname"><span class="pre">ModelMetaInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_model_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_model_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supports_stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'llm_model.png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'You</span> <span class="pre">are</span> <span class="pre">a</span> <span class="pre">helpful</span> <span class="pre">assistant</span> <span class="pre">that</span> <span class="pre">responds</span> <span class="pre">in</span> <span class="pre">Markdown</span> <span class="pre">format.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_arguments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_arguments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_llm_arguments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'STRING'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'INT'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'FLOAT'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'BOOL'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'SECRET_STRING'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'LONG_STRING'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inherits_from</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_persistent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/meta_info.html#ModelMetaInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.meta_info.ModelMetaInfo" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ui_elements.html#ui_elements.base_element.StreamLitPydanticModel" title="ui_elements.base_element.StreamLitPydanticModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">StreamLitPydanticModel</span></code></a></p>
+<p>This class is used to store the meta information for a model</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.add_conversation">
+<span class="sig-name descname"><span class="pre">add_conversation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conversation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="conversations.html#conversations.conversation.Conversation" title="conversations.conversation.Conversation"><span class="pre">Conversation</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/models/meta_info.html#ModelMetaInfo.add_conversation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.meta_info.ModelMetaInfo.add_conversation" title="Link to this definition"></a></dt>
+<dd><p>This method is used to add a conversation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conversation</strong> – The conversation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.additional_custom_fields_to_edit">
+<span class="sig-name descname"><span class="pre">additional_custom_fields_to_edit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="ui_elements.html#ui_elements.format_option.FormatOption" title="ui_elements.format_option.FormatOption"><span class="pre">FormatOption</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/models/meta_info.html#ModelMetaInfo.additional_custom_fields_to_edit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.meta_info.ModelMetaInfo.additional_custom_fields_to_edit" title="Link to this definition"></a></dt>
+<dd><p>This method is used to get the additional fields to show</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The additional fields to show</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.additional_custom_fields_to_show">
+<span class="sig-name descname"><span class="pre">additional_custom_fields_to_show</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="ui_elements.html#ui_elements.format_option.FormatOption" title="ui_elements.format_option.FormatOption"><span class="pre">FormatOption</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/models/meta_info.html#ModelMetaInfo.additional_custom_fields_to_show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.meta_info.ModelMetaInfo.additional_custom_fields_to_show" title="Link to this definition"></a></dt>
+<dd><p>This method is used to get the additional fields to show</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The additional fields to show</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.base_dir">
+<span class="sig-name descname"><span class="pre">base_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.base_dir" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.fields_to_edit">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fields_to_edit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="ui_elements.html#ui_elements.format_option.FormatOption" title="ui_elements.format_option.FormatOption"><span class="pre">FormatOption</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/models/meta_info.html#ModelMetaInfo.fields_to_edit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.meta_info.ModelMetaInfo.fields_to_edit" title="Link to this definition"></a></dt>
+<dd><p>This method is used to get the fields to edit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The fields to edit</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.fields_to_show">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fields_to_show</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="ui_elements.html#ui_elements.format_option.FormatOption" title="ui_elements.format_option.FormatOption"><span class="pre">FormatOption</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/models/meta_info.html#ModelMetaInfo.fields_to_show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.meta_info.ModelMetaInfo.fields_to_show" title="Link to this definition"></a></dt>
+<dd><p>This method is used to get the fields to show</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The fields to show</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.get_additional_custom_field_value">
+<span class="sig-name descname"><span class="pre">get_additional_custom_field_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/models/meta_info.html#ModelMetaInfo.get_additional_custom_field_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.meta_info.ModelMetaInfo.get_additional_custom_field_value" title="Link to this definition"></a></dt>
+<dd><p>This method is used to get the value for custom fields</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_name</strong> – The field name</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The field value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.get_conversations">
+<span class="sig-name descname"><span class="pre">get_conversations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="conversations.html#conversations.conversation.Conversation" title="conversations.conversation.Conversation"><span class="pre">Conversation</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/models/meta_info.html#ModelMetaInfo.get_conversations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.meta_info.ModelMetaInfo.get_conversations" title="Link to this definition"></a></dt>
+<dd><p>This method is used to get the conversations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The conversations</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.icon">
+<span class="sig-name descname"><span class="pre">icon</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.icon" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.inherits_from">
+<span class="sig-name descname"><span class="pre">inherits_from</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.inherits_from" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.is_persistent">
+<span class="sig-name descname"><span class="pre">is_persistent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.is_persistent" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.key">
+<span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.llm_arguments">
+<span class="sig-name descname"><span class="pre">llm_arguments</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.llm_arguments" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.llm_model_class">
+<span class="sig-name descname"><span class="pre">llm_model_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.llm_model_class" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.llm_model_file">
+<span class="sig-name descname"><span class="pre">llm_model_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.llm_model_file" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.memory_arguments">
+<span class="sig-name descname"><span class="pre">memory_arguments</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.memory_arguments" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'base_dir':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">alias_priority=2,</span> <span class="pre">validation_alias=AliasChoices(choices=['base_dir',</span> <span class="pre">'BaseDir']),</span> <span class="pre">description='The</span> <span class="pre">base</span> <span class="pre">dir</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">app'),</span> <span class="pre">'description':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">alias_priority=2,</span> <span class="pre">validation_alias=AliasChoices(choices=['description',</span> <span class="pre">'Description']),</span> <span class="pre">description='The</span> <span class="pre">description</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">model',</span> <span class="pre">metadata=[MinLen(min_length=20)]),</span> <span class="pre">'icon':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='llm_model.png',</span> <span class="pre">alias_priority=2,</span> <span class="pre">validation_alias=AliasChoices(choices=['icon',</span> <span class="pre">'Icon']),</span> <span class="pre">description='The</span> <span class="pre">icon</span> <span class="pre">for</span> <span class="pre">the</span> <span class="pre">model'),</span> <span class="pre">'inherits_from':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias_priority=2,</span> <span class="pre">validation_alias=AliasChoices(choices=['inherits_from',</span> <span class="pre">'InheritsFrom']),</span> <span class="pre">description='The</span> <span class="pre">model</span> <span class="pre">to</span> <span class="pre">inherit</span> <span class="pre">from'),</span> <span class="pre">'is_persistent':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=False,</span> <span class="pre">default=True,</span> <span class="pre">alias_priority=2,</span> <span class="pre">validation_alias=AliasChoices(choices=['is_persistent',</span> <span class="pre">'IsPersistent']),</span> <span class="pre">description='Whether</span> <span class="pre">the</span> <span class="pre">model</span> <span class="pre">is</span> <span class="pre">persistent'),</span> <span class="pre">'key':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">description='The</span> <span class="pre">key</span> <span class="pre">for</span> <span class="pre">the</span> <span class="pre">model'),</span> <span class="pre">'llm_arguments':</span> <span class="pre">FieldInfo(annotation=Dict[str,</span> <span class="pre">Any],</span> <span class="pre">required=False,</span> <span class="pre">default={},</span> <span class="pre">alias_priority=2,</span> <span class="pre">validation_alias=AliasChoices(choices=['llm_arguments',</span> <span class="pre">'LLMArguments']),</span> <span class="pre">description='The</span> <span class="pre">arguments</span> <span class="pre">for</span> <span class="pre">the</span> <span class="pre">LLM</span> <span class="pre">Model'),</span> <span class="pre">'llm_model_class':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias_priority=2,</span> <span class="pre">validation_alias=AliasChoices(choices=['llm_model_class',</span> <span class="pre">'LLMModelClass']),</span> <span class="pre">description='The</span> <span class="pre">model</span> <span class="pre">class'),</span> <span class="pre">'llm_model_file':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias_priority=2,</span> <span class="pre">validation_alias=AliasChoices(choices=['llm_model_file',</span> <span class="pre">'LLMModelFile']),</span> <span class="pre">description='The</span> <span class="pre">model</span> <span class="pre">file'),</span> <span class="pre">'memory_arguments':</span> <span class="pre">FieldInfo(annotation=Dict[str,</span> <span class="pre">Any],</span> <span class="pre">required=False,</span> <span class="pre">default={},</span> <span class="pre">alias_priority=2,</span> <span class="pre">validation_alias=AliasChoices(choices=['memory_arguments',</span> <span class="pre">'MemoryArguments']),</span> <span class="pre">description='The</span> <span class="pre">arguments</span> <span class="pre">for</span> <span class="pre">the</span> <span class="pre">chat</span> <span class="pre">memory</span> <span class="pre">module'),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">alias_priority=2,</span> <span class="pre">validation_alias=AliasChoices(choices=['name',</span> <span class="pre">'Name']),</span> <span class="pre">description='The</span> <span class="pre">name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">model',</span> <span class="pre">metadata=[MinLen(min_length=3)]),</span> <span class="pre">'required_llm_arguments':</span> <span class="pre">FieldInfo(annotation=Dict[str,</span> <span class="pre">Literal['STRING',</span> <span class="pre">'INT',</span> <span class="pre">'FLOAT',</span> <span class="pre">'BOOL',</span> <span class="pre">'SECRET_STRING',</span> <span class="pre">'LONG_STRING']],</span> <span class="pre">required=False,</span> <span class="pre">default={},</span> <span class="pre">alias_priority=2,</span> <span class="pre">validation_alias=AliasChoices(choices=['required_llm_arguments',</span> <span class="pre">'RequiredLLMArguments']),</span> <span class="pre">description='The</span> <span class="pre">required</span> <span class="pre">arguments</span> <span class="pre">for</span> <span class="pre">the</span> <span class="pre">model'),</span> <span class="pre">'supports_stream':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=False,</span> <span class="pre">alias_priority=2,</span> <span class="pre">validation_alias=AliasChoices(choices=['supports_stream',</span> <span class="pre">'SupportsStream']),</span> <span class="pre">description='Whether</span> <span class="pre">the</span> <span class="pre">model</span> <span class="pre">supports</span> <span class="pre">streaming'),</span> <span class="pre">'system_message':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default='You</span> <span class="pre">are</span> <span class="pre">a</span> <span class="pre">helpful</span> <span class="pre">assistant</span> <span class="pre">that</span> <span class="pre">responds</span> <span class="pre">in</span> <span class="pre">Markdown</span> <span class="pre">format.',</span> <span class="pre">alias_priority=2,</span> <span class="pre">validation_alias=AliasChoices(choices=['system_message',</span> <span class="pre">'SystemMessage']),</span> <span class="pre">description='The</span> <span class="pre">system</span> <span class="pre">message</span> <span class="pre">for</span> <span class="pre">the</span> <span class="pre">model')}</span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.model_fields" title="Link to this definition"></a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.model_post_init">
+<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">__context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#models.meta_info.ModelMetaInfo.model_post_init" title="Link to this definition"></a></dt>
+<dd><p>This function is meant to behave like a BaseModel method to initialise private attributes.</p>
+<p>It takes context as an argument since that’s what pydantic-core passes when calling it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> – The BaseModel instance.</p></li>
+<li><p><strong>__context</strong> – The context.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.required_llm_arguments">
+<span class="sig-name descname"><span class="pre">required_llm_arguments</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'STRING'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'INT'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'FLOAT'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'BOOL'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'SECRET_STRING'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'LONG_STRING'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.required_llm_arguments" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.set_additional_custom_field_value">
+<span class="sig-name descname"><span class="pre">set_additional_custom_field_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/meta_info.html#ModelMetaInfo.set_additional_custom_field_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.meta_info.ModelMetaInfo.set_additional_custom_field_value" title="Link to this definition"></a></dt>
+<dd><p>This method is used to set the value for custom fields</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field_name</strong> – The field name</p></li>
+<li><p><strong>field_value</strong> – The field value</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.set_value_for_custom_fields">
+<span class="sig-name descname"><span class="pre">set_value_for_custom_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/meta_info.html#ModelMetaInfo.set_value_for_custom_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.meta_info.ModelMetaInfo.set_value_for_custom_fields" title="Link to this definition"></a></dt>
+<dd><p>This method is used to set the value for custom fields</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field_name</strong> – The field name</p></li>
+<li><p><strong>field_value</strong> – The field value</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.supports_stream">
+<span class="sig-name descname"><span class="pre">supports_stream</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.supports_stream" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.system_message">
+<span class="sig-name descname"><span class="pre">system_message</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#models.meta_info.ModelMetaInfo.system_message" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.validate_base_dir">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_base_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/models/meta_info.html#ModelMetaInfo.validate_base_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.meta_info.ModelMetaInfo.validate_base_dir" title="Link to this definition"></a></dt>
+<dd><p>Validates the base dir</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – The value of the base dir</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value of the base dir</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the base dir is not found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.validate_icon">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_icon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FieldValidationInfo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/models/meta_info.html#ModelMetaInfo.validate_icon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.meta_info.ModelMetaInfo.validate_icon" title="Link to this definition"></a></dt>
+<dd><p>Validates the icon</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> – The value of the icon</p></li>
+<li><p><strong>field_info</strong> – The field info object from pydantic.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value of the icon</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the icon is not found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.meta_info.ModelMetaInfo.validate_model">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FieldValidationInfo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/models/meta_info.html#ModelMetaInfo.validate_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.meta_info.ModelMetaInfo.validate_model" title="Link to this definition"></a></dt>
+<dd><p>Validates the model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – The data of the model</p></li>
+<li><p><strong>field_info</strong> – The field info object from pydantic.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The processed and validated data for the model</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the model is invalid</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<span class="target" id="module-models"></span></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="conversations.html" class="btn btn-neutral float-left" title="conversations package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pages.html" class="btn btn-neutral float-right" title="pages package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Pevatrons.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

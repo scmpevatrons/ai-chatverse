@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>models.meta_info &mdash; AI ChatVerse 0.5.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=1dd76d02"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            AI ChatVerse
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction to AI ChatVerse</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Code Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">AI ChatVerse</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">models.meta_info</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for models.meta_info</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains the meta information for a model</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span><span class="n">Literal</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">importlib.util</span> <span class="kn">import</span> <span class="n">spec_from_file_location</span><span class="p">,</span> <span class="n">module_from_spec</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> \
+                        <span class="n">field_validator</span><span class="p">,</span> \
+                        <span class="n">model_validator</span><span class="p">,</span> \
+                        <span class="n">FieldValidationInfo</span><span class="p">,</span> \
+                        <span class="n">AliasChoices</span>
+<span class="kn">from</span> <span class="nn">ui_elements.format_option</span> <span class="kn">import</span> <span class="n">FormatOption</span>
+<span class="kn">from</span> <span class="nn">ui_elements.base_element</span> <span class="kn">import</span> <span class="n">StreamLitPydanticModel</span>
+<span class="kn">from</span> <span class="nn">conversations.conversation</span> <span class="kn">import</span> <span class="n">Conversation</span>
+<span class="kn">from</span> <span class="nn">models.base_model</span> <span class="kn">import</span> <span class="n">BaseLLMModel</span>
+
+
+<div class="viewcode-block" id="ModelMetaInfo">
+<a class="viewcode-back" href="../../models.html#models.meta_info.ModelMetaInfo">[docs]</a>
+<span class="k">class</span> <span class="nc">ModelMetaInfo</span><span class="p">(</span><span class="n">StreamLitPydanticModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class is used to store the meta information for a model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base_dir</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;base_dir&#39;</span><span class="p">,</span> <span class="s2">&quot;BaseDir&quot;</span><span class="p">),</span>
+                                      <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The base dir of the app&quot;</span><span class="p">)</span>
+    <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The key for the model&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;Name&#39;</span><span class="p">),</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name of the model&quot;</span><span class="p">,</span>
+                     <span class="n">min_length</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">description</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span><span class="p">),</span>
+                            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The description of the model&quot;</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">llm_model_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span>
+                                          <span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;llm_model_file&#39;</span><span class="p">,</span> <span class="s2">&quot;LLMModelFile&quot;</span><span class="p">),</span>
+                                          <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The model file&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">llm_model_class</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span>
+                                           <span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;llm_model_class&#39;</span><span class="p">,</span> <span class="s2">&quot;LLMModelClass&quot;</span><span class="p">),</span>
+                                            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The model class&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">supports_stream</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span>
+                                  <span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;supports_stream&#39;</span><span class="p">,</span> <span class="s2">&quot;SupportsStream&quot;</span><span class="p">),</span>
+                                  <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether the model supports streaming&quot;</span><span class="p">,</span>
+                                  <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">icon</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;icon&#39;</span><span class="p">,</span> <span class="s2">&quot;Icon&quot;</span><span class="p">),</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The icon for the model&quot;</span><span class="p">,</span>
+                     <span class="n">default</span><span class="o">=</span><span class="s2">&quot;llm_model.png&quot;</span><span class="p">)</span>
+    <span class="n">system_message</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span>
+                                          <span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;system_message&#39;</span><span class="p">,</span>
+                                                       <span class="s2">&quot;SystemMessage&quot;</span><span class="p">),</span>
+                                          <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The system message for the model&quot;</span><span class="p">,</span>
+                                          <span class="n">default</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;You are a helpful assistant that&quot;</span>
+                                                   <span class="s2">&quot; responds in Markdown format.&quot;</span><span class="p">))</span>
+    <span class="n">llm_arguments</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span>
+                                                    <span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;llm_arguments&#39;</span><span class="p">,</span>
+                                                                 <span class="s2">&quot;LLMArguments&quot;</span><span class="p">),</span>
+                                                    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The arguments for the LLM Model&quot;</span><span class="p">,</span>
+                                                     <span class="n">default</span><span class="o">=</span><span class="p">{})</span>
+    <span class="n">memory_arguments</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span>
+                                                       <span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;memory_arguments&#39;</span><span class="p">,</span>
+                                                                    <span class="s2">&quot;MemoryArguments&quot;</span><span class="p">),</span>
+                                                        <span class="n">description</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The arguments for the&quot;</span>
+                                                                     <span class="s2">&quot; chat memory module&quot;</span><span class="p">),</span>
+                                                        <span class="n">default</span><span class="o">=</span><span class="p">{})</span>
+    <span class="n">required_llm_arguments</span><span class="p">:</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span>
+                                    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;STRING&quot;</span><span class="p">,</span> <span class="s2">&quot;INT&quot;</span><span class="p">,</span> <span class="s2">&quot;FLOAT&quot;</span><span class="p">,</span>
+                                            <span class="s2">&quot;BOOL&quot;</span><span class="p">,</span>
+                                            <span class="s2">&quot;SECRET_STRING&quot;</span><span class="p">,</span> <span class="s2">&quot;LONG_STRING&quot;</span><span class="p">,</span>
+                                            <span class="p">]</span>
+                                <span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span>
+                                        <span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;required_llm_arguments&#39;</span><span class="p">,</span>
+                                                    <span class="s2">&quot;RequiredLLMArguments&quot;</span><span class="p">),</span>
+                                                    <span class="n">description</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The required arguments&quot;</span>
+                                                                <span class="s2">&quot; for the model&quot;</span><span class="p">),</span>
+                                                    <span class="n">default</span><span class="o">=</span><span class="p">{})</span>
+    <span class="n">inherits_from</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;inherits_from&#39;</span><span class="p">,</span>
+                                                                       <span class="s2">&quot;InheritsFrom&quot;</span><span class="p">),</span>
+                                         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The model to inherit from&quot;</span><span class="p">,</span>
+                                         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">is_persistent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;is_persistent&#39;</span><span class="p">,</span> <span class="s2">&quot;IsPersistent&quot;</span><span class="p">),</span>
+                                   <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether the model is persistent&quot;</span><span class="p">,</span>
+                                   <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">_conversations</span><span class="p">:</span><span class="nb">list</span><span class="p">[</span><span class="n">Conversation</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="ModelMetaInfo.add_conversation">
+<a class="viewcode-back" href="../../models.html#models.meta_info.ModelMetaInfo.add_conversation">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_conversation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conversation</span><span class="p">:</span><span class="n">Conversation</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is used to add a conversation</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            conversation: The conversation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conversations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conversation</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ModelMetaInfo.get_conversations">
+<a class="viewcode-back" href="../../models.html#models.meta_info.ModelMetaInfo.get_conversations">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">list</span><span class="p">[</span><span class="n">Conversation</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is used to get the conversations</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The conversations</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conversations</span></div>
+
+
+
+<div class="viewcode-block" id="ModelMetaInfo.get_additional_custom_field_value">
+<a class="viewcode-back" href="../../models.html#models.meta_info.ModelMetaInfo.get_additional_custom_field_value">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_additional_custom_field_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is used to get the value for custom fields</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            field_name: The field name</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The field value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm_arguments</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm_arguments</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="ModelMetaInfo.set_additional_custom_field_value">
+<a class="viewcode-back" href="../../models.html#models.meta_info.ModelMetaInfo.set_additional_custom_field_value">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_additional_custom_field_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">field_value</span><span class="p">:</span><span class="n">Any</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is used to set the value for custom fields</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            field_name: The field name</span>
+<span class="sd">            field_value: The field value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">llm_arguments</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">field_value</span></div>
+
+
+
+<div class="viewcode-block" id="ModelMetaInfo.additional_custom_fields_to_show">
+<a class="viewcode-back" href="../../models.html#models.meta_info.ModelMetaInfo.additional_custom_fields_to_show">[docs]</a>
+    <span class="k">def</span> <span class="nf">additional_custom_fields_to_show</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FormatOption</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is used to get the additional fields to show</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">             The additional fields to show</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">argument</span><span class="p">,</span> <span class="n">argument_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">required_llm_arguments</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="n">argument_type</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">argument</span><span class="p">,</span> <span class="n">field_name</span><span class="o">=</span><span class="n">argument</span><span class="p">)</span>
+            <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fields</span></div>
+
+
+
+<div class="viewcode-block" id="ModelMetaInfo.set_value_for_custom_fields">
+<a class="viewcode-back" href="../../models.html#models.meta_info.ModelMetaInfo.set_value_for_custom_fields">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_value_for_custom_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">field_value</span><span class="p">:</span><span class="n">Any</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is used to set the value for custom fields</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            field_name: The field name</span>
+<span class="sd">            field_value: The field value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">llm_arguments</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">field_value</span></div>
+
+
+
+<div class="viewcode-block" id="ModelMetaInfo.fields_to_show">
+<a class="viewcode-back" href="../../models.html#models.meta_info.ModelMetaInfo.fields_to_show">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">fields_to_show</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FormatOption</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is used to get the fields to show</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The fields to show</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">schema</span><span class="p">:</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_json_schema</span><span class="p">()</span>
+        <span class="n">field_info</span><span class="p">:</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;IMAGE_PATH&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;icon&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;icon&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;STRING&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;LONG_STRING&quot;</span><span class="p">,</span>
+                                 <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;description&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;LONG_STRING&quot;</span><span class="p">,</span>
+                                 <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;system_message&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;system_message&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;BOOL&quot;</span><span class="p">,</span>
+                                 <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;supports_stream&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;supports_stream&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;STRING&quot;</span><span class="p">,</span>
+                                 <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;llm_model_file&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;llm_model_file&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;STRING&quot;</span><span class="p">,</span>
+                                 <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;llm_model_class&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;llm_model_class&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;DICT&quot;</span><span class="p">,</span>
+                                 <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;llm_arguments&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;llm_arguments&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;DICT&quot;</span><span class="p">,</span>
+                                 <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;memory_arguments&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;memory_arguments&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;BOOL&quot;</span><span class="p">,</span>
+                                 <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;is_persistent&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;is_persistent&quot;</span><span class="p">)</span>
+                <span class="p">]</span>
+        <span class="k">return</span> <span class="n">fields</span></div>
+
+
+<div class="viewcode-block" id="ModelMetaInfo.fields_to_edit">
+<a class="viewcode-back" href="../../models.html#models.meta_info.ModelMetaInfo.fields_to_edit">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">fields_to_edit</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FormatOption</span><span class="p">]]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is used to get the fields to edit</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The fields to edit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">schema</span><span class="p">:</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_json_schema</span><span class="p">()</span>
+        <span class="n">field_info</span><span class="p">:</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;IMAGE_PATH&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;icon&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;icon&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;STRING&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">create_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;LONG_STRING&quot;</span><span class="p">,</span>
+                                 <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="n">create_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;LONG_STRING&quot;</span><span class="p">,</span>
+                                 <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;system_message&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;system_message&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;BOOL&quot;</span><span class="p">,</span>
+                                 <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;supports_stream&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;supports_stream&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;DICT&quot;</span><span class="p">,</span>
+                                 <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;llm_arguments&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;llm_arguments&quot;</span><span class="p">),</span>
+                    <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="s2">&quot;DICT&quot;</span><span class="p">,</span>
+                                 <span class="n">title</span><span class="o">=</span><span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;memory_arguments&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                                 <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;memory_arguments&quot;</span><span class="p">)</span>
+                <span class="p">]</span>
+        <span class="k">return</span> <span class="n">fields</span></div>
+
+
+
+<div class="viewcode-block" id="ModelMetaInfo.additional_custom_fields_to_edit">
+<a class="viewcode-back" href="../../models.html#models.meta_info.ModelMetaInfo.additional_custom_fields_to_edit">[docs]</a>
+    <span class="k">def</span> <span class="nf">additional_custom_fields_to_edit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FormatOption</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is used to get the additional fields to show</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">             The additional fields to show</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">argument</span><span class="p">,</span> <span class="n">argument_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">required_llm_arguments</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="n">FormatOption</span><span class="p">(</span><span class="n">format_type</span><span class="o">=</span><span class="n">argument_type</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">argument</span><span class="p">,</span> <span class="n">field_name</span><span class="o">=</span><span class="n">argument</span><span class="p">)</span>
+            <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fields</span></div>
+
+
+
+<div class="viewcode-block" id="ModelMetaInfo.validate_base_dir">
+<a class="viewcode-back" href="../../models.html#models.meta_info.ModelMetaInfo.validate_base_dir">[docs]</a>
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;base_dir&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">validate_base_dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates the base dir</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            value: The value of the base dir</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The value of the base dir</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the base dir is not found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Base dir </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="ModelMetaInfo.validate_icon">
+<a class="viewcode-back" href="../../models.html#models.meta_info.ModelMetaInfo.validate_icon">[docs]</a>
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;icon&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">validate_icon</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">field_info</span><span class="p">:</span><span class="n">FieldValidationInfo</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates the icon</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            value: The value of the icon</span>
+<span class="sd">            field_info: The field info object from pydantic.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The value of the icon</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the icon is not found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">field_info</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;base_dir&quot;</span><span class="p">],</span> <span class="s2">&quot;assets&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Icon file </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+    <span class="c1"># pylint: disable=unused-argument</span>
+<div class="viewcode-block" id="ModelMetaInfo.validate_model">
+<a class="viewcode-back" href="../../models.html#models.meta_info.ModelMetaInfo.validate_model">[docs]</a>
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">validate_model</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span><span class="n">Dict</span><span class="p">,</span> <span class="n">field_info</span><span class="p">:</span><span class="n">FieldValidationInfo</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates the model</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data: The data of the model</span>
+<span class="sd">            field_info: The field info object from pydantic.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The processed and validated data for the model</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the model is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model_file_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;llm_model_file&quot;</span><span class="p">,</span> <span class="s2">&quot;LLMModelFile&quot;</span><span class="p">]</span>
+        <span class="n">model_class_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;llm_model_class&quot;</span><span class="p">,</span> <span class="s2">&quot;LLMModelClass&quot;</span><span class="p">]</span>
+        <span class="n">inherits_from_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;inherits_from&quot;</span><span class="p">,</span> <span class="s2">&quot;InheritsFrom&quot;</span><span class="p">]</span>
+        <span class="n">model_file_key</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">model_class_key</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">inherits_from_key</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">model_file_keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">model_file_key</span> <span class="o">=</span> <span class="n">key</span>
+                <span class="k">break</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">model_class_keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">model_class_key</span> <span class="o">=</span> <span class="n">key</span>
+                <span class="k">break</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">inherits_from_keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">inherits_from_key</span> <span class="o">=</span> <span class="n">key</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">model_file_key</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">model_class_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">inherits_from_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">((</span><span class="s2">&quot;Expected llm_model_file and llm_model_class&quot;</span>
+                                  <span class="s2">&quot; or inherits_from to be present&quot;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="n">llm_model_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;base_dir&quot;</span><span class="p">],</span>
+                                      <span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">model_file_key</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">llm_model_file</span><span class="p">)</span> \
+        <span class="ow">and</span> <span class="n">llm_model_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">model_class_key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">class_name</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">model_class_key</span><span class="p">]</span>
+            <span class="n">module_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;models.</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="n">model_file_key</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">spec</span> <span class="o">=</span> <span class="n">spec_from_file_location</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span>
+                                            <span class="n">llm_model_file</span><span class="p">)</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span>
+            <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span> <span class="ow">and</span> \
+            <span class="nb">issubclass</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">),</span> <span class="n">BaseLLMModel</span><span class="p">):</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">model_file_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">llm_model_file</span>
+                <span class="k">return</span> <span class="n">data</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">((</span><span class="sa">f</span><span class="s2">&quot;Class </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="n">model_class_key</span><span class="p">]</span><span class="si">}</span><span class="s2"> not found in model file&quot;</span>
+                                    <span class="s2">&quot; </span><span class="si">{llm_model_file}</span><span class="s2"> or is not derived from BaseLLMModel&quot;</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">((</span><span class="sa">f</span><span class="s2">&quot;Model file </span><span class="si">{</span><span class="n">llm_model_file</span><span class="si">}</span><span class="s2"> not found or is not a python&quot;</span>
+                            <span class="s2">&quot; file or doesn&#39;t have a corresponding model class&quot;</span><span class="p">))</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Pevatrons.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
