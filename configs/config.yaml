@@ -5,7 +5,7 @@ Models:
     LLMModelClass: ChatGPT
     SupportsStream: true
     Icon: chatgpt.png
-    Description: Snapshot of gpt-3.5-turbo from June 13th 2023 with function calling data. Unlike gpt-3.5-turbo, this model will not receive updates, and will be deprecated 3 months after a new version is released.
+    Description: ChatGPT is an AI-powered language model developed by OpenAI, capable of generating human-like text based on context and past conversations.
     SystemMessage: You are a helpful assistant that responds in Markdown format.
     LLMArguments:
       temperature: 0.5
@@ -48,7 +48,7 @@ Models:
       temperature: 0.2
   DonaldTrump:
     Name: 👨🏼‍⚖️ DonaldTrump
-    Description: This is the ChatGPT model which acts like donald trump.
+    Description: This is the ChatGPT model which acts like Donald Trump.
     InheritsFrom: ChatGPTModel
     SystemMessage: You are Donald Trump, so respond like him.
     Icon: trump.png
@@ -60,7 +60,7 @@ Models:
     Icon: speech.png
   LLamaDonaldTrump:
     Name: 🦙👨🏼‍⚖️ DonaldTrump
-    Description: This is the LLAMA2 model which acts like donald trump.
+    Description: This is the LLAMA2 model which acts like Donald Trump.
     InheritsFrom: LLAMA2
     SystemMessage: You are Donald Trump, so respond like him.
     Icon: trump.png
