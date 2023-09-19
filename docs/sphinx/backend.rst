@@ -12,10 +12,10 @@ backend.backend module
    :undoc-members:
    :show-inheritance:
 
-backend.config\_file module
----------------------------
+backend.metagpt module
+----------------------
 
-.. automodule:: backend.config_file
+.. automodule:: backend.metagpt
    :members:
    :undoc-members:
    :show-inheritance:

@@ -2,8 +2,13 @@
 
 Dive into the world of conversational AI with AI Chatverse, a free and open-source application tailored for enthusiasts, developers, and AI aficionados alike. Built upon the robust foundation of Streamlit, AI Chatverse offers a user-friendly chat interface that seamlessly integrates with any chat model, be it from Langchain or a custom-built solution of your choice.
 
-What sets AI Chatverse apart is its feature: the ability to dynamically craft a 'session model'. These session models allow users to modify and experiment with existing models in real-time. Whether you're keen on tweaking the system prompt, adjusting hyperparameters like temperature, or just wish to test the waters with chatbot models, AI Chatverse offers a playground for all your experimentation needs.
+What sets AI Chatverse apart is its feature:
+1. To experience multi-agent collaboration interactions with MetaGPT and more (in the future) to accomplish a task. 
+1. the ability to dynamically craft a 'session model'. These session models allow users to modify and experiment with existing models in real-time. Whether you're keen on tweaking the system prompt, adjusting hyperparameters like temperature, or just wish to test the waters with chatbot models, AI Chatverse offers a playground for all your experimentation needs.
 
+![Multi Agent Collaboration](assets/multi_agent_collab.png)
+![Collaboration Settings](assets/meta_gpt_settings.png)
+![Chat with Multi Agents](assets/chat_with_metagpt.png)
 ![Chat with the model](assets/chat_view.png)
 ![View your models](assets/edit_and_view_model.png)
 ![Edit or Create Derivative Models](assets/create_or_edit_model.png)

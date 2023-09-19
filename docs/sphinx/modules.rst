@@ -11,4 +11,5 @@ Code Documentation
    pages
    ui_elements
    utils
-   🏠_Home
+   schema
+   Multi_Agent_Collab
