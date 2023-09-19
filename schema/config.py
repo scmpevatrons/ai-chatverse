@@ -6,7 +6,7 @@ import yaml
 from pydantic import BaseModel, Field, model_validator, field_validator
 from models.meta_info import ModelMetaInfo
 from schema.group_agent import GroupAgent
-from schema.shared_state import SHARED_CONFIG
+from schema.shared_state import get_shared_state
 from utils.util import clear_default_values, get_field_name
 
 
@@ -37,6 +37,7 @@ class ConfigFile(BaseModel):
         Returns:
             The data
         """
+        SHARED_CONFIG = get_shared_state()
         SHARED_CONFIG.update(**data)
         return data
 

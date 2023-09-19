@@ -5,7 +5,7 @@ from typing import Any, Dict, Union
 from pydantic import Field
 from ui_elements.base_element import StreamLitPydanticModel
 from ui_elements.format_option import FormatOption
-from schema.shared_state import SHARED_CONFIG
+from schema.shared_state import get_shared_state
 
 
 # pylint: disable=abstract-method
@@ -21,6 +21,14 @@ class MetaGPTSetting(StreamLitPydanticModel):
     run_tests: bool = Field(description="Generate Test Cases for the application", default=False)
 
     def set_field_value(self, field_name: str, field_value: Any) -> None:
+        """
+        This method is used to set the value for a field
+
+        Args:
+            field_name: The field name
+            field_value: The field value
+        """
+        SHARED_CONFIG:Dict[str, Any] = get_shared_state()
         if field_name == "openai_api_key":
             SHARED_CONFIG[field_name] = field_value
         return super().set_field_value(field_name, field_value)
@@ -36,6 +44,7 @@ class MetaGPTSetting(StreamLitPydanticModel):
         Returns:
             The field value
         """
+        SHARED_CONFIG:Dict[str, Any] = get_shared_state()
         if field_name == "openai_api_key":
             return SHARED_CONFIG.get("openai_api_key", "")
         return getattr(self, field_name)
