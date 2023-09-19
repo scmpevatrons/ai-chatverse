@@ -1,30 +1,13 @@
 """
-This module is used to parse and store the config file
+This module is used to define the config file schema
 """
 from typing import Any, Dict
-from pydantic import BaseModel, Field, model_validator
+import yaml
+from pydantic import BaseModel, Field, model_validator, field_validator
 from models.meta_info import ModelMetaInfo
-
-
-def clear_default_values(dict_model:Dict[str, Any])->Dict[str, Any]:
-    """
-    Clears the default values from the model
-    
-    Args:
-        dict_model: The model
-    
-    Returns:
-        The model without default values
-    """
-    default_values = {"icon" : "llm_model.png"}
-    for key, value in dict_model.copy().items():
-        if isinstance(value, (list, dict)):
-            continue
-        if value is None:
-            del dict_model[key]
-        if key in default_values and default_values[key] == value:
-            del dict_model[key]
-    return dict_model
+from schema.group_agent import GroupAgent
+from schema.shared_state import SHARED_CONFIG
+from utils.util import clear_default_values, get_field_name
 
 
 class ConfigFile(BaseModel):
@@ -33,8 +16,29 @@ class ConfigFile(BaseModel):
     """
 
     models:Dict[str, ModelMetaInfo] = Field(validation_alias="Models", description="The models")
-    keys:set[str] = Field(validation_alias="Keys", description="The model keys", default=set())
+    keys:set[str] = Field(validation_alias="Keys", description="The model keys",
+                          default_factory=set)
     base_dir:str = Field(validation_alias="BaseDir", description="The base directory", default=None)
+    group_chat_agents:Dict[str, GroupAgent] = Field(validation_alias="GroupChatAgents",
+                                                    description="The group chat agents")
+    shared_state:Dict[str, Any] = Field(validation_alias="SharedState",
+                                        description="The shared state", default_factory=dict)
+
+
+    @field_validator("shared_state")
+    @classmethod
+    def validate_shared_state(cls, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        This method is used to validate the shared state
+        
+        Args:
+            data: The data
+        
+        Returns:
+            The data
+        """
+        SHARED_CONFIG.update(**data)
+        return data
 
 
     @model_validator(mode='before')
@@ -50,17 +54,19 @@ class ConfigFile(BaseModel):
             The data
         """
         if isinstance(data, dict):
-            model_key = None
-            if "models" in data:
-                model_key = "models"
-            elif "Models" in data:
-                model_key = "Models"
+            model_key = get_field_name(data, ["models", "Models"])
             if model_key is None:
                 raise ValueError("Models key not found in config file")
             models = data[model_key]
             for model_key, model in models.items():
                 if "base_dir" not in model:
                     model["base_dir"] = data["base_dir"]
+            group_chat_agents_key = get_field_name(data, ["group_chat_agents", "GroupChatAgents"])
+            if group_chat_agents_key is None:
+                raise ValueError("GroupChatAgents key not found in config file")
+            group_chat_agents = data[group_chat_agents_key]
+            for group_chat_agent in group_chat_agents.values():
+                group_chat_agent["base_dir"] = data["base_dir"]
         return data
 
 
@@ -114,3 +120,20 @@ class ConfigFile(BaseModel):
             models_already_validated[model_key] = model
         self.models = models_already_validated
         return self
+
+
+def pydantic_validate_config(config_file:str, base_path:str)->ConfigFile:
+    """
+    Validates the config file using pydantic
+    Args:
+        config_file: The path to the config file
+        base_path: The base path of the app
+    Returns:
+        The validated config file
+    """
+    with open(config_file, encoding="utf-8") as file_handler:
+        try:
+            config = yaml.safe_load(file_handler)
+        except yaml.YAMLError as exc:
+            raise exc
+    return ConfigFile(base_dir=base_path, **config)

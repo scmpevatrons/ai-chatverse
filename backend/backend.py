@@ -6,10 +6,29 @@ import os
 from importlib.util import spec_from_file_location, module_from_spec
 from typing import Dict
 from langchain import PromptTemplate
-from utils.util import pydantic_validate_config
+from schema.config import pydantic_validate_config
+from schema.group_agent import GroupAgent
 from models.meta_info import ModelMetaInfo
 from models.base_langchain_model import StreamlitDisplayHandler
 from conversations.conversation import Conversation
+
+
+def get_group_agents(config_file:str, base_path:str)->dict[str, GroupAgent]:
+    """
+    This method is used to get the group agents from the config file
+    
+    Args:
+        config_file: The path to the config file
+        base_path: The base path to the config file
+    
+    Returns:
+        The group agents in the config file
+    """
+    group_agents = pydantic_validate_config(config_file, base_path).group_chat_agents
+    group_agent_objects = {}
+    for group_agent_name, group_agent in group_agents.items():
+        group_agent_objects[group_agent_name] = group_agent
+    return group_agent_objects
 
 
 def get_models(config_file:str, base_path:str)->Dict[str, ModelMetaInfo]:

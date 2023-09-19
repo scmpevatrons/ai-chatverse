@@ -1,71 +1,27 @@
 """
 This module has the necesary utils to deal with App Interface and intereactions
 """
+import os
 from datetime import datetime
-from typing import Dict, Callable, List, Literal, Any, Optional
+from typing import Dict, Callable, List, Literal, Optional
+from uuid import uuid4
+from shutil import make_archive
 import streamlit_nested_layout
 import streamlit as st
-from models.base_model import BaseLLMModel
-from models.message import Message
 from backend.backend import get_models, Conversation,\
                     ModelMetaInfo, start_conversation, \
-                    summmarize_conversation, get_handler
+                    summmarize_conversation, get_handler, \
+                    get_group_agents
 from ui_elements.format_option import FormatOption
+from ui_elements.components import render_user_message, render_system_message, \
+                                    render_group_ai_message, render_group_user_message
+from conversations.group_conversation import GroupConversation
+from schema.message import Message
+from schema.group_message import GroupMessage
+from schema.attachment_message import AttachmentMessage
+from schema.group_agent import GroupAgent
 
 
-def render_user_message(message:Message)->None:
-    """
-    This function renders the user message
-    
-    Args:
-        message: The message object containing user message
-    """
-    columns_weights = [0.5, 0.5]
-    user_col, _ = st.columns(columns_weights)
-    with user_col:
-        with st.chat_message("user"):
-            st.write(message.message)
-    st.write(message.timestamp.strftime("%I:%M %p"))
-
-
-def render_system_message(message:Message, previous_user_message:Message,
-                          message_placeholder=None, container=None,
-                          calculate_time=True, icon_path=None)->tuple[st.container, st.empty]:
-    """
-    This function renders the system message
-    
-    Args:
-        message: The message object containing system message
-        previous_user_message: The previous user message
-        message_placeholder: The placeholder to write the message
-        container: The container of the system message.
-        calculate_time: Whether to calculate the time taken for the system to respond
-        icon_path: The path to Model chat Icon
-    
-    Returns:
-        The container and the message placeholder of the system message
-    """
-    columns_weights = [0.1, 0.9]
-    _, system_col = st.columns(columns_weights)
-    with system_col:
-        if container is None:
-            container = st.chat_message("assistant", avatar=icon_path)
-        else:
-            container.empty()
-        with container:
-            if message_placeholder:
-                message_placeholder.write(message.message)
-            else:
-                message_placeholder = st.empty()
-                message_placeholder.write(message.message)
-    if calculate_time:
-        # columns to store the time taken for the system to respond
-        _, system_time_col = st.columns(columns_weights)
-        time_taken_for_response = message.timestamp - previous_user_message.timestamp
-        time_in_ms = time_taken_for_response.total_seconds()
-        with system_time_col:
-            st.write(f"🕓 {time_in_ms:0.2f}s " + message.timestamp.strftime("%I:%M %p"))
-    return container, message_placeholder
 
 
 def load_models(config_file:str, base_path:str)->Dict[str, ModelMetaInfo]:
@@ -86,6 +42,21 @@ def load_models(config_file:str, base_path:str)->Dict[str, ModelMetaInfo]:
         models = st.session_state['models']
     return models
 
+def load_group_agents(config_file:str, base_path:str)->Dict[str, GroupAgent]:
+    """
+    This function loads the group agents from the config file
+    If the group agents are already loaded, it returns the group agents from the session state
+
+    Args:
+        config_file: The path to the config file
+        base_path: The base path of the app
+    Returns:
+         A dictionary of group agents with key as the group agent identifier and value as the group agent object
+    """
+    if "group_agents" not in st.session_state:
+        group_agents = get_group_agents(config_file, base_path)
+        st.session_state["group_agents"] = group_agents
+    return st.session_state["group_agents"]
 
 def load_conversations()->List[Conversation]:
     """
@@ -279,6 +250,33 @@ def is_model_locked()->bool:
     if 'model_meta_dict' in st.session_state:
         return st.session_state['model_meta_dict'] is not None
     return False
+
+
+def on_click_group_chat_in_focus(mode:Literal['agents_view', 'character_view', 'chat_view'],
+                                 group_agent:GroupAgent)->Callable[[], None]:
+    """
+    This function returns a function that is called when a group agent is clicked
+    
+    Args:
+        mode: The mode in which the group agent will be used
+        group_agent: The group agent object
+    
+    Returns:
+        The function callback that is to be called when the group agent is clicked
+    """
+    def group_chat_inner():
+        st.session_state['view_mode'] = mode
+        st.session_state['group_agent'] = group_agent
+    return group_chat_inner
+
+
+def get_group_view_mode()->Optional[Literal['agents_view', 'character_view', 'chat_view']]:
+    """
+    This function returns the group view mode
+    """
+    if 'view_mode' not in st.session_state:
+        return 'agents_view'
+    return st.session_state['view_mode']
 
 
 def on_click_model_in_focus(mode:Literal['view', 'model_create', 'model_delete',
@@ -529,6 +527,197 @@ def render_model_create(model_meta_infos:List[ModelMetaInfo])->None:
 
 
 
+def validate_settings_and_start_group_chat(group_agent:GroupAgent)->None:
+    """
+    This function validates the settings and starts the group chat
+    
+    Args:
+        group_agent: The group agent object
+    """
+    group_meta_dict = st.session_state['group_meta_dict']
+    group_meta_dict = group_agent.setting.get_data_from_meta(group_meta_dict)
+    open_ai_api_key = group_agent.setting.get_value(group_meta_dict['openai_api_key'])
+    if len(open_ai_api_key) <= 30:
+        st.toast("Please enter a valid openai api key", icon="⚠️")
+        return
+    if group_agent.setting.validate_edit_and_save_state(group_meta_dict):
+        st.session_state['view_mode'] = 'chat_view'
+
+
+def get_group_conversations()->List[GroupConversation]:
+    """
+    This function returns the group conversations
+    
+    Returns:
+        The list of group conversations
+    """
+    if 'group_conversations' not in st.session_state:
+        st.session_state['group_conversations'] = []
+    return st.session_state['group_conversations']
+
+def get_current_group_conversation()->Optional[GroupConversation]:
+    """
+    This function returns the current group conversation
+    
+    Returns:
+        The current group conversation
+    """
+    if 'current_group_conversation' not in st.session_state:
+        st.session_state['current_group_conversation'] = None
+    return st.session_state['current_group_conversation']
+
+
+def group_chat_on_submit(key:str, group_agent:GroupAgent)->None:
+    idea = st.session_state[key]
+    st.session_state["current_idea"] = idea
+    group_conversation = GroupConversation(group_agent=group_agent, conversation_topic=idea)
+    user_character = group_agent.get_character('user')
+    user_message = GroupMessage(sender_name=user_character.name,
+                                icon=user_character.icon,
+                                message=idea,
+                                message_type='USER')
+    group_conversation.add_message(user_message)
+    st.session_state['current_group_conversation'] = group_conversation
+    group_conversations = get_group_conversations()
+    group_conversations.append(group_conversation)
+
+
+
+
+def render_group_conversation(group_conversation:GroupConversation)->None:
+    """
+    This function renders the group conversation
+    
+    Args:
+        group_conversation: The group conversation object
+    """
+    messages = group_conversation.messages
+    for message in messages:
+        if message.message_type.upper() == "USER":
+            render_group_user_message(message)
+        else:
+            render_group_ai_message(message, show_time=True)
+
+
+def group_conversation_on_click(group_conversation:GroupConversation)->None:
+    """
+    This function is called when a group conversation is clicked
+    
+    Args:
+        group_conversation: The group conversation object
+    """
+    st.session_state['view_mode'] = 'chat_view'
+    st.session_state['current_group_conversation'] = group_conversation
+
+
+def reset_group_conversation()->None:
+    """
+    This function resets the group conversation
+    """
+    st.session_state['view_mode'] = 'agents_view'
+
+
+def render_group_agents_view(config_file:str, base_path:str)->None:
+    """
+    This function renders the group agents view
+
+    Args:
+        config_file: The path to the config file
+        base_path: The base path
+    """
+    group_conversations = get_group_conversations()
+    current_conversation = get_current_group_conversation()
+    with st.sidebar:
+        st.button("🧵 Start a new conversation", use_container_width=True,
+                  on_click=reset_group_conversation)
+        for group_conversation in group_conversations:
+            st.button(group_conversation.conversation_topic, use_container_width=True,
+                        on_click=group_conversation_on_click,
+                        type="primary" if group_conversation == current_conversation else "secondary",
+                        args=(group_conversation,),
+                        key=group_conversation.conversation_topic)
+        
+    if get_group_view_mode() == 'agents_view':
+        st.info("This is the page where you start a group conversation")
+        group_agents = load_group_agents(config_file, base_path)
+        for group_agent_name, group_agent in group_agents.items():
+            pic, meta_info, button_section = st.columns([2, 6, 2])
+            with pic:
+                st.image(group_agent.icon, width=100)
+            with meta_info:
+                st.subheader(group_agent.name)
+                st.write(group_agent.description)
+                st.image(group_agent.flow_diagram)
+            with button_section:
+                st.button("Start Chat", type="primary", key=f"{group_agent_name}_view",
+                        on_click=on_click_group_chat_in_focus('character_view', group_agent))
+    else:
+        view_mode = get_group_view_mode()
+        group_agent:GroupAgent = st.session_state['group_agent']
+        if view_mode == 'character_view':
+            st.button("◀️ Back", key="back", on_click=reset_group_conversation)
+            st.info(group_agent.description)
+            st.image(group_agent.flow_diagram)
+            st.subheader("Group Chat Characters")
+            num_characters_in_a_row = 3
+            i = 0
+            while i < len(group_agent.characters):
+                if i % num_characters_in_a_row == 0:
+                    cols = st.columns(num_characters_in_a_row)
+                character = group_agent.characters[i]
+                with cols[i % num_characters_in_a_row]:
+                    icon_col, meta_info_col = st.columns([3, 6])
+                    with icon_col:
+                        st.image(character.icon, width=75)
+                    with meta_info_col:
+                        st.subheader(character.name)
+                        st.write(character.description)
+                i += 1
+            st.subheader("Settings")
+            st.session_state['group_meta_dict'] = group_agent.setting.get_serialised_model_data()
+            group_agent.setting.render_model_in_edit_mode(st.session_state['group_meta_dict'])
+
+            cols = st.columns([10, 2])
+            with cols[1]:
+                st.button("Start Chat", type="primary", key=f"{group_agent.name}_start_view",
+                        on_click=validate_settings_and_start_group_chat, args=(group_agent,))
+        else:
+            key = "group_chat_input"
+            if current_conversation is None:
+                st.chat_input("Enter your message here", key=key, on_submit=group_chat_on_submit, args=(key, group_agent,))
+                st.subheader("Chat with " + group_agent.name)
+                st.write(group_agent.usage_description)
+                st.header("Examples")
+                for example in group_agent.examples:
+                    st.subheader(example.name)
+                    st.info(example.description)
+            group_conversation = get_current_group_conversation()
+            if group_conversation is not None:
+                render_group_conversation(group_conversation)
+                if len(group_conversation.get_messages()) == 1:
+                    group_conversation.group_agent.run(group_conversation.conversation_topic)
+                    artifact_basename = os.path.basename(group_conversation.final_artifact)
+                    group_conversation.done = True
+                    session_id = get_session_id()
+                    archive_name = f"artifacts/{session_id}_{artifact_basename}"
+                    artifact_file = make_archive(archive_name, 'zip', group_conversation.final_artifact)
+                    message = AttachmentMessage(sender_name=group_agent.name, icon=group_agent.icon,
+                                                message=artifact_file, message_type="AI",
+                                                attachment_type="Final Artifact")
+                    group_conversation.add_message(message)
+                    render_group_ai_message(message, show_time=True)
+
+
+def get_session_id()->str:
+    """
+    This function returns the session id
+    """
+    if 'session_id' not in st.session_state:
+        st.session_state['session_id'] = str(uuid4())
+    return st.session_state['session_id']
+
+
+
 def render_models_view(config_file:str, base_path:str)->None:
     """
     This function renders the models view
@@ -591,4 +780,3 @@ def set_page_config():
     st.set_page_config(page_title="AI ChatVerse", page_icon=":robot_face:", menu_items={
         'About': about
     })
-                

@@ -14,6 +14,7 @@ from ui_elements.format_option import FormatOption
 from ui_elements.base_element import StreamLitPydanticModel
 from conversations.conversation import Conversation
 from models.base_model import BaseLLMModel
+from schema.shared_state import SHARED_CONFIG
 
 
 class ModelMetaInfo(StreamLitPydanticModel):
@@ -111,7 +112,12 @@ class ModelMetaInfo(StreamLitPydanticModel):
         Returns:
             The field value
         """
-        return self.llm_arguments[field_name] if field_name in self.llm_arguments else None
+        if field_name in SHARED_CONFIG:
+            return SHARED_CONFIG[field_name]
+        value = self.llm_arguments[field_name] if field_name in self.llm_arguments else None
+        if value is not None:
+            SHARED_CONFIG[field_name] = value
+        return value
 
 
     def set_additional_custom_field_value(self, field_name:str, field_value:Any):
@@ -147,6 +153,7 @@ class ModelMetaInfo(StreamLitPydanticModel):
             field_name: The field name
             field_value: The field value
         """
+        SHARED_CONFIG[field_name] = field_value
         self.llm_arguments[field_name] = field_value
 
 

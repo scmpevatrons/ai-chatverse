@@ -1,3 +1,6 @@
+SharedState:
+  dummy: abc
+  #openai_api_key: Your-GPT-4-API-KEY
 Models:
   ChatGPTModel:
     Name: 🤖 ChatGPT
@@ -46,21 +49,68 @@ Models:
     SystemMessage: You are a senior software engineer who reviews code and responds Markdown format.
     LLMArguments:
       temperature: 0.2
-  DonaldTrump:
-    Name: 👨🏼‍⚖️ DonaldTrump
-    Description: This is the ChatGPT model which acts like Donald Trump.
+  ElonMusk:
+    Name: 🚀 Elon Musk
+    Description: This is the ChatGPT model which acts like Elon Musk.
     InheritsFrom: ChatGPTModel
-    SystemMessage: You are Donald Trump, so respond like him.
-    Icon: trump.png
+    SystemMessage: You are Elon Musk, so respond like him.
+    Icon: elon_musk.png
   SpeechEnhancer:
     Name: 🗣 Speech Enhancer
-    Description: This is the ChatGPT model which can enhance your speech.
+    Description: This is the ChatGPT model which acts like your speech writer.
     InheritsFrom: ChatGPTModel
     SystemMessage: You are a powerfull speach writer. Select the write words and structure to communicate your ideas accurately and vividly. Use rhetorical devices (aliteration, triads, similies, metaphors, etc.) to enhance and emphasize ideas.
     Icon: speech.png
-  LLamaDonaldTrump:
-    Name: 🦙👨🏼‍⚖️ DonaldTrump
-    Description: This is the LLAMA2 model which acts like Donald Trump.
+  LLamaElonMusk:
+    Name: 🚀 LLAMA Elon Musk
+    Description: This is the LLAMA2 model which acts like Elon Musk.
     InheritsFrom: LLAMA2
-    SystemMessage: You are Donald Trump, so respond like him.
-    Icon: trump.png
+    SystemMessage: You are Elon Musk, so respond like him.
+    Icon: elon_musk.png
+GroupChatAgents:
+  MetaGPT:
+    Name: MetaGPT
+    Icon: metagpt.png
+    Description: |
+      MetaGPT is an automated software development tool that transforms system requirements into comprehensive software artifacts, including design documents and code
+      
+      **Note:** To use this you would need to have a GPT-4 API key from OpenAI.
+      
+      Visit [Github](https://github.com/geekan/MetaGPT) for more information.
+    FlowDiagram: metagpt_architecture.png
+    UsageDescription: You are the boss give a clear and consice description of what you want your team to build.
+    Examples:
+      - Name: Quiz Club Application
+        Description: |
+         The Quiz Club of a school wants a web application where student quiz-masters can host quizzes and members can answer it online. There must be restrictions in terms of time for each question. A leaderboard acessible to all must be generated at the end of each quiz.
+      - Name: Game
+        Description: |
+         Write a classic and simple flappy bird game.
+      - Name: Transcribe Music
+        Description: |
+         Build an application that transcribes sheet music into a digital format.
+    Characters:
+      - Name: Boss (You)
+        Description: CEO
+        Role: User
+        Icon: boss.png
+      - Name: Alice
+        Description: Product Manager
+        Icon: product_manager.png
+        Role: Product Manager
+      - Name: Bob
+        Description: Software Architect
+        Icon: architect.png
+        Role: Architect
+      - Name: Eve
+        Description: Project Manager
+        Icon: project_manager.png
+        Role: Project Manager
+      - Name: Alex
+        Description: Software Engineer
+        Role: Engineer
+        Icon: engineer.png
+      - Name: Edward
+        Description: QA Engineer
+        Role: QA Engineer
+        Icon: qa_engineer.png

@@ -1,8 +1,7 @@
 """
 The util module contains all the utility functions
 """
-import yaml
-from backend.config_file import ConfigFile
+from typing import Any, Dict, Optional
 
 class InvalidConfigError(Exception):
     """
@@ -10,19 +9,38 @@ class InvalidConfigError(Exception):
     """
 
 
-
-def pydantic_validate_config(config_file:str, base_path:str)->ConfigFile:
+def clear_default_values(dict_model:Dict[str, Any])->Dict[str, Any]:
     """
-    Validates the config file using pydantic
+    Clears the default values from the model
+    
     Args:
-        config_file: The path to the config file
-        base_path: The base path of the app
+        dict_model: The model
+    
     Returns:
-        The validated config file
+        The model without default values
     """
-    with open(config_file, encoding="utf-8") as file_handler:
-        try:
-            config = yaml.safe_load(file_handler)
-        except yaml.YAMLError as exc:
-            raise exc
-    return ConfigFile(base_dir=base_path, **config)
+    default_values = {"icon" : "llm_model.png"}
+    for key, value in dict_model.copy().items():
+        if isinstance(value, (list, dict)):
+            continue
+        if value is None:
+            del dict_model[key]
+        if key in default_values and default_values[key] == value:
+            del dict_model[key]
+    return dict_model
+
+def get_field_name(data:dict[str, Any], field_names:list[str])->Optional[str]:
+    """
+    Gets the field name from the data
+    
+    Args:
+        data: The data to verify the field name.
+        field_names: The field names to check for
+    Returns:
+        The field name if found else None
+    """
+    for field_name in field_names:
+        if field_name in data:
+            return field_name
+    return None
+

@@ -49,6 +49,6 @@ if __name__ == "__main__":
     # Render everything
     # Load the models from the config file to the session
 
-    DIR_NAME = os.path.dirname(__file__)
+    DIR_NAME = os.path.dirname(os.path.dirname(__file__))
     CONFIG_FILE = os.path.join(DIR_NAME, "configs/config.yaml")
     render(CONFIG_FILE, DIR_NAME)

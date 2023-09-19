@@ -4,7 +4,7 @@ This file contains the base model class that all models should inherit from
 from typing import  List, Optional
 from datetime import datetime
 from langchain.callbacks.base import BaseCallbackHandler
-from models.message import Message
+from schema.message import Message
 
 #pylint: disable=too-few-public-methods
 class FakeLLM:

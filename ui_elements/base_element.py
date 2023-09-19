@@ -657,7 +657,8 @@ class StreamLitPydanticModel(BaseModel):
 
 
     @classmethod
-    def get_data_from_meta(cls, meta_info:dict[str, FormatOption], key_prefix:str="")->dict[str, Any]:
+    def get_data_from_meta(cls, meta_info:dict[str, FormatOption],
+                           key_prefix:str="")->dict[str, Any]:
         """
         This function gets the data from the streamlit session state
         based on the meta information
@@ -859,7 +860,7 @@ class StreamLitPydanticModel(BaseModel):
                     field_value = self.get_default_value(field_type=field_type)
                 self.render_object(field_name, field_name, field_value, field_type=field_type,
                                     edit_mode=True)
-                
+
 
     def set_value_from_sidebar(self):
         """
